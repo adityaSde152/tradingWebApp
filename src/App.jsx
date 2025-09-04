@@ -1,11 +1,16 @@
 import React from 'react';
+import NavBar from './components/NavBar';
+import Home from './pages/Home';
 
 const App = () => {
   return (
-    <div className='bg-red-500 border-2 rounded-full'>
-      <h1>Welcome to the Trading App</h1>
+    <div className="flex flex-col bg-[#0C1522]">
+      <NavBar />
+      <main className="mt-15">
+        <Home />
+      </main>
     </div>
   );
-}
+};
 
 export default App;
