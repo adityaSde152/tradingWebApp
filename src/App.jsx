@@ -1,6 +1,7 @@
-import React from 'react';
-import NavBar from './components/NavBar';
-import Home from './pages/Home';
+import React from "react";
+import NavBar from "./components/NavBar";
+import Home from "./pages/Home";
+import Register from "./pages/Register";
 
 const App = () => {
   return (
@@ -8,6 +9,7 @@ const App = () => {
       <NavBar />
       <main className="mt-15">
         <Home />
+        <Register />
       </main>
     </div>
   );
