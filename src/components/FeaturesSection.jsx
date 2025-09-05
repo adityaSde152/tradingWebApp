@@ -27,14 +27,16 @@ const containerVariants = {
   },
 };
 
+
+
 // Card animation (fade only, no movement)
-const cardVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { duration: 0.5, ease: "easeOut" },
-  },
-};
+// const cardVariants = {
+//   hidden: { opacity: 0 },
+//   visible: {
+//     opacity: 1,
+//     transition: { duration: 0.5, ease: "easeOut" },
+//   },
+// };
 
 const FeaturesSection = () => {
   return (
@@ -48,12 +50,28 @@ const FeaturesSection = () => {
       {features.map((feature, idx) => (
         <motion.div
           key={idx}
-          variants={cardVariants}
-          className="bg-white text-[#0C1522] p-8 rounded shadow hover:shadow-lg flex flex-col justify-center items-center transition w-[25vw] h-[25vh]"
+          whileHover={{ scale: 1.08, rotate: 1 }}
+          transition={{ type: "spring", stiffness: 300 }}
+          className="relative w-[25vw] h-[30vh] bg-white rounded-2xl shadow-xl overflow-hidden group cursor-pointer"
         >
-          <h3 className="text-xl font-semibold mb-4">{feature.title}</h3>
-          <p className="text-gray-700 text-center">{feature.description}</p>
-        </motion.div>
+          <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-[#38D300] group-hover:shadow-[0_0_30px_#38D300] transition-all duration-500"></div>
+
+            <div
+            className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-repeat bg-[#ffffff] opacity-90"
+            ></div>
+
+            {/* Floating circles for decoration */}
+            <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#38D300]/20 rounded-full blur-3xl group-hover:animate-ping"></div>
+            <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-[#38D300]/20 rounded-full blur-2xl group-hover:animate-ping"></div>
+
+            <div className="absolute inset-0 rounded-2xl border-4 border-transparent group-hover:border-[#38D300] group-hover:shadow-[0_0_30px_#38D300] transition-all duration-500"></div>
+
+
+            <div className="relative flex flex-col justify-center items-center h-full text-center px-6 hover:text-[#38D300]">
+            <h2 className="text-xl font-bold text-black mb-3">{feature.title}</h2>
+            <p className="text-gray-700">{feature.description}</p>
+            </div>
+            </motion.div>
       ))}
     </motion.section>
   );

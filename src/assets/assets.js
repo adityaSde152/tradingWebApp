@@ -6,7 +6,9 @@ import explore from '../assets/Expore.webp';
 import future from '../assets/future.png';
 import partner from '../assets/partner.webp';
 import neon_glow from '../assets/neon-glow.webp';
-
+import trading_vedio from '../assets/vediofortradingapp.mp4';
+import resources from '../assets/Rescource.webp';
+import Green_hornet from '../assets/Green-hornet.webp';
 export default {
   hero_img,
   app_icon,
@@ -15,5 +17,8 @@ export default {
   explore,
   future,
   partner,
-  neon_glow
+  neon_glow,
+  trading_vedio,
+  resources,
+  Green_hornet
 };
