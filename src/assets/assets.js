@@ -9,6 +9,8 @@ import neon_glow from '../assets/neon-glow.webp';
 import trading_vedio from '../assets/vediofortradingapp.mp4';
 import resources from '../assets/Rescource.webp';
 import Green_hornet from '../assets/Green-hornet.webp';
+import login_hero_img from "../assets/login_hero_img.png";
+
 export default {
   hero_img,
   app_icon,
@@ -20,5 +22,6 @@ export default {
   neon_glow,
   trading_vedio,
   resources,
-  Green_hornet
+  Green_hornet,
+  login_hero_img,
 };

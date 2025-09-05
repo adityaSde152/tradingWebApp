@@ -1,15 +1,18 @@
-import React from 'react';
-import NavBar from './components/NavBar';
-import Home from './pages/Home';
+import React from "react";
+import NavBar from "./components/NavBar";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import { Route, Router, Routes } from "react-router-dom";
 
 const App = () => {
   return (
-    <div className="flex flex-col bg-[#0C1522]">
+    <>
       <NavBar />
-      <main className="mt-15">
-        <Home />
-      </main>
-    </div>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </>
   );
 };
 
