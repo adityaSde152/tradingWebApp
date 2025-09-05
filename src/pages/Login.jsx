@@ -10,7 +10,7 @@ import { IoMdEyeOff } from "react-icons/io";
 import Dropdown from "../components/Dropdown";
 import countryCurrencyData from "../assets/countryCurrencyData";
 
-const Register = () => {
+const Login = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -27,6 +27,10 @@ const Register = () => {
     setSelectedCurrency(match ? match.currency : "");
   };
 
+  // Currency change (manual selection allowed)
+  const handleCurrencyChange = (currency) => {
+    setSelectedCurrency(currency);
+  };
   return (
     <div className="h-screen flex flex-col md:flex-row">
       {/* Left Side - Image */}
@@ -34,7 +38,7 @@ const Register = () => {
         <img
           src={assets.login_hero_img}
           alt="Trading Illustration"
-          className="w-full h-full object-contain"
+          className="w-full h-full object-contain shadow-2xl shadow-black"
         />
         {/* <div className="absolute inset-0 bg-black/60" /> */}
       </div>
@@ -86,7 +90,7 @@ const Register = () => {
                 icon={BiDollarCircle}
                 options={currencyOptions}
                 value={selectedCurrency}
-                onChange={handleCountryChange}
+                onChange={handleCurrencyChange}
               />
             )}
 
@@ -198,4 +202,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Login;
