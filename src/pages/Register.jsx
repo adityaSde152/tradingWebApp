@@ -7,10 +7,26 @@ import { MdOutlineLock } from "react-icons/md";
 import { FaLink } from "react-icons/fa6";
 import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
+import Dropdown from "../components/Dropdown";
+import countryCurrencyData from "../assets/countryCurrencyData";
 
 const Register = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [selectedCurrency, setSelectedCurrency] = useState(null);
+
+  const countryOptions = countryCurrencyData.map((c) => c.country);
+  const currencyOptions = countryCurrencyData.map((c) => c.currency);
+
+  // Country selection on change
+  const handleCountryChange = (country) => {
+    setSelectedCountry(country);
+    const match = countryCurrencyData.find((c) => c.country === country);
+    setSelectedCurrency(match ? match.currency : "");
+  };
+
   return (
     <div className="h-screen flex flex-col md:flex-row">
       {/* Left Side - Image */}
@@ -50,48 +66,28 @@ const Register = () => {
             </button>
           </div>
 
-          {/* Form */}
+          {/* Form  */}
           <form className={`${!isLogin ? "space-y-4" : "space-y-8"}`}>
             {!isLogin && (
               // Country
-              <div className="relative w-full">
-                <input
-                  type="text"
-                  id="country"
-                  placeholder="Country"
-                  className="peer w-full px-4 pl-8 pt-4 pb-2 rounded-lg bg-gray-900 border border-gray-700 text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-green-500"
-                />
-                <BiWorld className="absolute top-4 text-gray-500 left-1 text-xl" />
-                <label
-                  htmlFor="country"
-                  className=" peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:-translate-y-1/2 peer-[:not(:placeholder-shown)]:scale-90 absolute left-8 top-2.5 text-gray-400 text-sm transition-all
-                          peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500
-                          peer-focus:-top-3 peer-focus:bg-gray-900 peer-focus:text-green-500"
-                >
-                  Country
-                </label>
-              </div>
+              <Dropdown
+                label="Country"
+                icon={BiWorld}
+                options={countryOptions}
+                value={selectedCountry}
+                onChange={handleCountryChange}
+              />
             )}
 
             {!isLogin && (
               // Currency
-              <div className="relative w-full">
-                <input
-                  type="text"
-                  id="currency"
-                  placeholder="Currency"
-                  className="peer w-full px-4 pl-8 pt-4 pb-2 rounded-lg bg-gray-900 border border-gray-700 text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-green-500"
-                />
-                <BiDollarCircle className="absolute top-4 text-gray-500 left-1 text-xl" />
-                <label
-                  htmlFor="currency"
-                  className="absolute left-8 top-2.5 text-gray-400 text-sm transition-all
-                          peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500
-                          peer-focus:-top-3 peer-focus:bg-gray-900 peer-focus:text-green-500"
-                >
-                  Currency
-                </label>
-              </div>
+              <Dropdown
+                label="Currency"
+                icon={BiDollarCircle}
+                options={currencyOptions}
+                value={selectedCurrency}
+                onChange={handleCountryChange}
+              />
             )}
 
             {/* Email */}
@@ -99,15 +95,16 @@ const Register = () => {
               <input
                 type="email"
                 id="email"
-                placeholder="Email"
-                className="peer w-full px-4 pl-8 pt-4 pb-2 rounded-lg bg-gray-900 border border-gray-700 text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-green-500"
+                autoComplete="email"
+                placeholder=" "
+                className="peer w-full px-4 pl-8 pt-4 pb-2 rounded-lg border border-gray-700 text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-green-500"
               />
               <MdOutlineMail className="absolute top-4 text-gray-500 left-1 text-xl" />
               <label
                 htmlFor="email"
-                className="absolute left-8 top-2.5 text-gray-400 text-sm transition-all
-                          peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500
-                          peer-focus:-top-3 peer-focus:bg-gray-900 peer-focus:text-green-500"
+                className="peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:-translate-y-1/2 absolute left-8 top-2.5 text-gray-400  transition-all
+                          peer-placeholder-shown:top-3.5  peer-placeholder-shown:text-gray-500
+                          peer-focus:-top-3 bg-black peer-focus:text-green-500"
               >
                 Email
               </label>
@@ -116,24 +113,31 @@ const Register = () => {
             {/* Password */}
             <div className="relative w-full">
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 id="password"
-                placeholder="Password"
-                className="peer w-full px-4 pl-8 pt-4 pb-2 rounded-lg bg-gray-900 border border-gray-700 text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-green-500"
+                autoComplete="current-password"
+                placeholder=" "
+                className="peer w-full px-4 pl-8 pt-4 pb-2 rounded-lg  border border-gray-700 text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-green-500"
               />
               {/* Hide and Show Password */}
               {showPassword ? (
-                <IoMdEye className="absolute top-4 text-gray-500 right-8 text-xl" />
+                <IoMdEye
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute top-4 text-gray-500 right-8 text-xl cursor-pointer"
+                />
               ) : (
-                <IoMdEyeOff className="absolute top-4 text-gray-500 right-16 text-xl" />
+                <IoMdEyeOff
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute top-4 text-gray-500 right-8 text-xl cursor-pointer"
+                />
               )}
               <MdOutlineLock className="absolute top-4 text-gray-500 left-1 text-xl" />
 
               <label
                 htmlFor="password"
-                className="absolute left-8 top-2.5 text-gray-400 text-sm transition-all
-                          peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500
-                          peer-focus:-top-3 peer-focus:bg-gray-900 peer-focus:text-green-500"
+                className="peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:-translate-y-1/2 absolute left-8 top-2.5 text-gray-400  transition-all
+                          peer-placeholder-shown:top-3.5  peer-placeholder-shown:text-gray-500
+                          peer-focus:-top-3 bg-black peer-focus:text-green-500"
               >
                 Password
               </label>
@@ -144,15 +148,15 @@ const Register = () => {
                 <input
                   type="text"
                   id="referral"
-                  placeholder="Referral"
-                  className="peer w-full px-4 pl-8 pt-4 pb-2 rounded-lg bg-gray-900 border border-gray-700 text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-green-500"
+                  placeholder=" "
+                  className="peer w-full px-4 pl-8 pt-4 pb-2 rounded-lg border border-gray-700 text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
                 <FaLink className="absolute top-4 text-gray-500 left-1 text-xl" />
                 <label
                   htmlFor="referral"
-                  className="absolute left-8 top-2.5 text-gray-400 text-sm transition-all
-                          peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500
-                          peer-focus:-top-3 peer-focus:bg-gray-900 peer-focus:text-green-500"
+                  className="peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:-translate-y-1/2 absolute left-8 top-2.5 text-gray-400  transition-all
+                          peer-placeholder-shown:top-3.5  peer-placeholder-shown:text-gray-500
+                          peer-focus:-top-3 bg-black peer-focus:text-green-500"
                 >
                   Referral (Optional)
                 </label>
@@ -176,8 +180,9 @@ const Register = () => {
               {isLogin ? "Login →" : "Register →"}
             </button>
           </form>
+
           {/* Divider */}
-          <div className="flex items-center my-6">
+          <div className="flex items-center mb-6 mt-2">
             <div className="flex-grow border-t border-gray-700"></div>
             <span className="px-3 text-gray-400 text-sm">Sign in via</span>
             <div className="flex-grow border-t border-gray-700"></div>
