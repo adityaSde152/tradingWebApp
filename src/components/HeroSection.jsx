@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
-import assets from "../assets/assets";
+import PlanetSection from "./Planet";
 
 const HeroSection = () => {
   const headingRef = useRef(null);
@@ -24,11 +24,12 @@ const HeroSection = () => {
   const headingText = "Trade\nSmarter,\nProfit Faster";
 
   return (
-    <div className="flex justify-center h-[140vh] bg-[rgb(0,11,18)]">
+    <div className="flex justify-center h-[110vh] bg-[rgb(0,11,18)]">
+    <div className="flex justify-center h-[140vh] bg-dark">
       <div className="basis-1/2 flex flex-col gap-5 justify-center pl-30 h-[90vh]">
         <h1
           ref={headingRef}
-          className="text-white text-8xl font-gideon-roman "
+          className="text-white md:text-7xl text-8xl font-gideon-roman "
         >
           {headingText.split("").map((char, i) =>
             char === "\n" ? (
@@ -45,17 +46,13 @@ const HeroSection = () => {
           tools, and lighting-fast execution. Your future, one decision away.
         </p>
 
-        <button className="bg-[#38D300] rounded text-lg text-white w-[200px] h-[50px]">
+        <button className="bg-green rounded text-lg text-white w-[200px] h-[50px]">
           Get Started Free
         </button>
       </div>
 
-      <div className="basis-1/2 pt-2">
-        <img
-          src={assets.hero_img}
-          alt="Hero"
-          className="max-h-[90%] object-contain"
-        />
+      <div className=" bg-[rgb(0,11,18)] basis-1/2 pt-2">
+          <PlanetSection />
       </div>
     </div>
   );
