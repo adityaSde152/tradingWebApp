@@ -27,3 +27,14 @@
   }
 }
 
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+/* index.css */
+.hero-heading {
+  text-shadow: 0 0 6px rgba(0, 255, 0, 0.8),
+               0 0 12px rgba(0, 255, 0, 0.6);
+}

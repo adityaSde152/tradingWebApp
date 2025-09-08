@@ -7,7 +7,7 @@ import { MdOutlineLock } from "react-icons/md";
 import { FaLink } from "react-icons/fa6";
 import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
-import Dropdown from "../components/Dropdown";
+import Dropdown from "../components/Home/Dropdown";
 import countryCurrencyData from "../assets/countryCurrencyData";
 
 const Login = () => {
