@@ -1,15 +1,16 @@
-import hero_img from '../assets/trading-app-hero-img.png';
-import app_icon from '../assets/app-icon.webp';
-import footer_img from '../assets/footer-img.webp';
-import expand from '../assets/expand.webp';
-import explore from '../assets/Expore.webp';
-import future from '../assets/future.png';
-import partner from '../assets/partner.webp';
-import neon_glow from '../assets/neon-glow.webp';
-import trading_vedio from '../assets/vediofortradingapp.mp4';
-import resources from '../assets/Rescource.webp';
-import Green_hornet from '../assets/Green-hornet.webp';
+import hero_img from "../assets/trading-app-hero-img.png";
+import app_icon from "../assets/app-icon.webp";
+import footer_img from "../assets/footer-img.webp";
+import expand from "../assets/expand.webp";
+import explore from "../assets/Expore.webp";
+import future from "../assets/future.png";
+import partner from "../assets/partner.webp";
+import neon_glow from "../assets/neon-glow.webp";
+import trading_vedio from "../assets/vediofortradingapp.mp4";
+import resources from "../assets/Rescource.webp";
+import Green_hornet from "../assets/Green-hornet.webp";
 import login_hero_img from "../assets/login_hero_img.png";
+import logo from "../assets/logo.png";
 
 export default {
   hero_img,
@@ -24,4 +25,5 @@ export default {
   resources,
   Green_hornet,
   login_hero_img,
+  logo,
 };
