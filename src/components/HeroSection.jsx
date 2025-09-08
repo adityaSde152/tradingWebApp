@@ -24,7 +24,7 @@ const HeroSection = () => {
   const headingText = "Trade\nSmarter,\nProfit Faster";
 
   return (
-    <div className="flex justify-center h-[110vh] bg-dark">
+    <div className="flex justify-center h-[110vh] bg-dark pt-12">
       <div className="basis-1/2 flex flex-col gap-5 justify-center pl-30 h-[90vh]">
         <h1
           ref={headingRef}

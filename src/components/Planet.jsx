@@ -175,7 +175,7 @@ function LocationPin({ lat, lon, label }) {
     <group position={position} ref={pinRef}>
       {/* Lucide Location Pin rendered in 3D space as HTML overlay */}
       <Html center occlude>
-  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", zIndex: 100 }}>
     <MapPin
       size={20}
       color="limegreen"
