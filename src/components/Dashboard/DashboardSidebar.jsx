@@ -37,10 +37,9 @@ const DashboardSidebar = () => {
         </h2>
       </div>
       <nav className="flex flex-col gap-4 flex-1">
-        {sidebarItems.map((item, index) => (
-          <>
+        {sidebarItems.map((item) => (
+          <React.Fragment key={item.link}>
             <NavLink
-              key={index}
               to={item.link}
               className={({ isActive }) =>
                 `flex relative  items-center gap-3 pr-10 py-2 rounded-r-lg ${
@@ -64,7 +63,7 @@ const DashboardSidebar = () => {
                 </>
               )}
             </NavLink>
-          </>
+          </React.Fragment>
         ))}
       </nav>
     </aside>
