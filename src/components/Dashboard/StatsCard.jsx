@@ -1,0 +1,89 @@
+import React from "react";
+import { FaWallet, FaArrowDown, FaArrowUp } from "react-icons/fa";
+import { MdSavings } from "react-icons/md";
+import { BiDollar } from "react-icons/bi";
+
+const iconMap = {
+  wallet: <FaWallet size={20} />,
+  income: <BiDollar size={20} />,
+  savings: <MdSavings size={20} />,
+  expenses: <FaArrowDown size={20} />,
+};
+
+const StatsCard = () => {
+  const statsData = [
+    {
+      id: 1,
+      title: "Total Balance",
+      amount: 632000,
+      currency: "USD",
+      icon: "wallet",
+      change: "+1.29%",
+      changeType: "positive",
+    },
+    {
+      id: 2,
+      title: "Total Income",
+      amount: 592000,
+      currency: "USD",
+      icon: "income",
+      change: "-1.29%",
+      changeType: "negative",
+    },
+    {
+      id: 3,
+      title: "Total Savings",
+      amount: 354000,
+      currency: "USD",
+      icon: "savings",
+      change: "+1.29%",
+      changeType: "positive",
+    },
+    {
+      id: 4,
+      title: "Total Expenses",
+      amount: 238000,
+      currency: "USD",
+      icon: "expenses",
+      change: "-1.29%",
+      changeType: "negative",
+    },
+  ];
+
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+      {statsData.map((stat) => (
+        <div
+          key={stat.id}
+          className="bg-gray-800 rounded-2xl shadow-md p-3 flex flex-col gap-3 w-full max-w-sm mx-auto"
+        >
+          {/* Icon */}
+          <div className="w-10 h-10 flex items-center justify-center rounded-lg shadow-md shadow-green-500/30 bg-gray-900 text-green-500">
+            {iconMap[stat.icon]}
+          </div>
+
+          {/* Title + Amount */}
+          <p className="text-gray-400 text-sm">{stat.title}</p>
+          <div className="flex justify-between items-center">
+            <h2 className="text-xs lg:text-sm  font-semibold text-white">
+              ${stat.amount.toLocaleString()}
+            </h2>
+
+            {/* Change */}
+            <p
+              className={`text-xs font-medium rounded-2xl px-1 py-1 ${
+                stat.changeType === "positive"
+                  ? "text-green bg-green-100/10"
+                  : "text-red-500 bg-red-100/10"
+              }`}
+            >
+              {stat.change}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default StatsCard;
