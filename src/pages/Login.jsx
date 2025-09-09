@@ -32,19 +32,20 @@ const Login = () => {
     setSelectedCurrency(currency);
   };
   return (
-    <div className="h-screen flex flex-col md:flex-row">
+    <div className="h-screen flex flex-col md:flex-row relative">
       {/* Left Side - Image */}
-      <div className="md:w-3/5 hidden w-full md:flex justify-start items-start bg-black">
+
+      <div className="relative md:w-1/2 hidden w-full h-full md:flex justify-start items-start bg-[#0a0f14] overflow-hidden">
         <img
           src={assets.login_hero_img}
           alt="Trading Illustration"
-          className="w-full h-full object-contain shadow-2xl shadow-black"
+          className="w-full h-full object-contain mt-24"
         />
-        {/* <div className="absolute inset-0 bg-black/60" /> */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0a0f14] via-transparent to-[#0a0f14]" />
       </div>
 
       {/* Right Side - Form */}
-      <div className="md:w-2/5 w-full flex items-center justify-center px-6 py-4 bg-black text-white">
+      <div className="md:w-1/2 h-full w-full flex items-center justify-center px-6 py-4 bg-black text-white">
         <div className="max-w-md w-full">
           <h2 className="text-2xl font-semibold text-center mb-4">
             Welcome to Trading Platform
