@@ -34,7 +34,6 @@ export default {
   resources,
   Green_hornet,
   login_hero_img,
-<<<<<<< HEAD
   day_night,
   Night,
   Day,
@@ -43,8 +42,6 @@ export default {
   Modile_img3,
   Modile_img4,
   Modile_img5,
-  Modile_img6
-=======
+  Modile_img6,
   logo,
->>>>>>> 798405321a84552558203ddbb80d2a19de55ed72
 };
