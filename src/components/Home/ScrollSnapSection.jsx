@@ -9,32 +9,32 @@ const tradingCards = [
   {
     title: "Live Data",
     description: "Monitor the markets in real-time for smarter decisions.",
-    image: assets.Modile_img8,
+    image: assets.Mobile_img8,
   },
   {
     title: "Instant Payouts",
     description: "Withdraw your profits quickly and securely, anytime.",
-    image: assets.Modile_img2,
+    image: assets.Mobile_img2,
   },
   {
     title: "Smart Tools",
     description: "Analyze trends and trade confidently with AI-powered tools.",
-    image: assets.Modile_img3,
+    image: assets.Mobile_img3,
   },
   {
     title: "Advanced Charts",
     description: "Visualize market trends with advanced charts.",
-    image: assets.Modile_img4,
+    image: assets.Mobile_img4,
   },
   {
     title: "AI Alerts",
     description: "Get notified of trading opportunities instantly.",
-    image: assets.Modile_img5,
+    image: assets.Mobile_img5,
   },
   {
     title: "Secure Wallet",
     description: "Store your assets safely with secure wallets.",
-    image: assets.Modile_img6,
+    image: assets.Mobile_img6,
   },
 ];
 
