@@ -1,8 +1,7 @@
 import React from "react";
-import NavBar from "./components/Home/NavBar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import { Route, Router, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import ChatBot from "./components/ChatBot";
 import Dashboard from "./pages/Dashboard";
 import PageNotFound from "./pages/PageNotFound";
@@ -12,19 +11,19 @@ import DashboardMainNavigation from "./components/Dashboard/DashboardMainNavigat
 const App = () => {
   return (
     <>
-      <NavBar />
-      <ChatBot/>
+      <ChatBot />
       <Routes>
         <Route path="/" element={<MainNavigation />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
+          <Route index element={<Home />} />
+          <Route path="login" element={<Login />} />
         </Route>
 
         {/* Dashboard Routes */}
         <Route path="/dashboard" element={<DashboardMainNavigation />}>
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route index  element={<Dashboard />} />
+          <Route path="*" element={<PageNotFound />} />
         </Route>
-        <Route path="/*" element={<PageNotFound />} />
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </>
   );

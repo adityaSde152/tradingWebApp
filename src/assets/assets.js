@@ -45,5 +45,5 @@ export default {
   Modile_img5,
   Modile_img6,
   logo,
-  Modile_img8,
+>>>>>>> 798405321a84552558203ddbb80d2a19de55ed72
 };
