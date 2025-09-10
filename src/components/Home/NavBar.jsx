@@ -8,21 +8,41 @@ export default function Navbar() {
   const navItems = (
     <>
       {" "}
-      <Link onClick={() => setIsOpen(false)} to={"/"}>
-        PRODUCT
-      </Link>
-      <Link onClick={() => setIsOpen(false)} to={"/"}>
-        SOLUTIONS
-      </Link>
-      <Link onClick={() => setIsOpen(false)} to={"/"}>
-        AGENCIES
-      </Link>
-      <Link onClick={() => setIsOpen(false)} to={"/"}>
-        PRICING
-      </Link>
-      <Link onClick={() => setIsOpen(false)} to={"/"}>
+      <NavLink
+        onClick={() => setIsOpen(false)}
+        to={"/"}
+        className={({ isActive }) => `${isActive && "text-green"}`}
+      >
+        Home
+      </NavLink>
+      <NavLink
+        onClick={() => setIsOpen(false)}
+        to={"/about-us"}
+        className={({ isActive }) => `${isActive && "text-green"}`}
+      >
+        About us
+      </NavLink>
+      <NavLink
+        onClick={() => setIsOpen(false)}
+        to={"/blog"}
+        className={({ isActive }) => `${isActive && "text-green"}`}
+      >
+        Blog
+      </NavLink>
+      <NavLink
+        onClick={() => setIsOpen(false)}
+        to={"/resources"}
+        className={({ isActive }) => `${isActive && "text-green"}`}
+      >
         RESOURCES
-      </Link>
+      </NavLink>
+      <NavLink
+        onClick={() => setIsOpen(false)}
+        to={"/download"}
+        className={({ isActive }) => `${isActive && "text-green"}`}
+      >
+        Download App
+      </NavLink>
     </>
   );
 
@@ -41,51 +61,59 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
   return (
-    <div
-      className={`${
-        scrolled ? "w-full bg-transparent flex justify-center" : ""
-      }`}
-    >
+    <div className="fixed top-0 left-0 w-full z-99 overflow-x-hidden">
       <nav
-        className={`bg-dark fixed w-full z-999 shadow-sm ${
+        className={`bg-dark shadow-sm transition-all duration-300 mx-auto ${
           scrolled
-            ? "bg-dark border border-gray-400 rounded-xl shadow-md mt-2 mx-auto  max-w-[80%]"
-            : ""
+            ? "bg-dark border border-gray-400 rounded-xl shadow-md mt-2 max-w-[90%] sm:max-w-[85%] md:max-w-[80%] duration-300"
+            : "w-full"
         } text-white`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="lg:px-20">
           <div className="flex justify-between items-center h-16">
             {/* Left section */}
-            <Link to={"/"} className="flex items-center">
-              <img src={assets.logo} className="w-16 h-16 text-2xl" />
-              <div className="font-bold text-xl text-green"> BINARYV</div>
+            <Link to={"/"} className="flex items-center space-x-2">
+              <img src={assets.logo} className="w-12 h-12 sm:w-14 sm:h-14" />
+              <div className="font-bold text-lg sm:text-xl text-green">
+                BINARYV
+              </div>
             </Link>
 
             {/* Desktop menu */}
-            <nav className={`hidden md:flex space-x-6 text-sm font-medium`}>
+            <nav
+              className={`hidden lg:flex space-x-6 text-xs xl:text-sm font-medium uppercase`}
+            >
               {navItems}
             </nav>
 
             {/* Right section */}
-            <div className="hidden md:flex items-center space-x-4">
-              <Link
+            <div className="hidden lg:flex items-center space-x-4">
+              <NavLink
                 onClick={() => setIsOpen(false)}
-                to={"/"}
-                className="border px-4 py-1 rounded-full hover:bg-green text-sm duration-300"
+                to={"/demo-account"}
+                className={({ isActive }) =>
+                  `${
+                    isActive && "text-green"
+                  } border px-2 text-xs lg:px-4 py-1 rounded-full hover:bg-green  duration-300`
+                }
               >
                 Demo Account
-              </Link>
-              <Link
+              </NavLink>
+              <NavLink
                 onClick={() => setIsOpen(false)}
                 to={"/login"}
-                className="text-sm px-2 py-1 rounded-full hover:bg-green  hover:border-gray-600 duration-300"
+                className={({ isActive }) =>
+                  `${
+                    isActive && "text-green"
+                  } text-sm px-2 py-1 rounded-full hover:bg-green  hover:border-gray-600 duration-300`
+                }
               >
-                SIGN IN
-              </Link>
+                Sign In
+              </NavLink>
             </div>
 
             {/* Mobile menu button */}
-            <div className="md:hidden duration-300">
+            <div className="lg:hidden duration-300">
               <button onClick={() => setIsOpen(!isOpen)}>
                 {isOpen ? (
                   <X size={24} className="cursor-pointer" />
@@ -105,21 +133,24 @@ export default function Navbar() {
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.2, ease: "easeInOut" }}
-              className="md:hidden px-4 pb-4  space-y-2 text-sm font-medium"
+              className="lg:hidden px-4 pb-4  space-y-2 text-sm font-medium"
             >
-              <div className="flex flex-col gap-2 items-center">{navItems}</div>
+              <nav className="flex flex-col gap-2 items-center ">
+                {navItems}
+              </nav>
               <Link
+                to={"/demo-account"}
                 onClick={() => setIsOpen(false)}
-                className="border block px-4 py-1 text-center rounded-full text-sm w-full mt-2 hover:bg-green duration-300"
+                className="border block px-4 py-1 text-center rounded-full text-sm w-full mt-2  hover:bg-green duration-300"
               >
                 Demo Account
               </Link>
               <Link
                 onClick={() => setIsOpen(false)}
-                to={"/"}
+                to={"/login"}
                 className="block text-sm text-center py-1 hover:bg-green rounded-full"
               >
-                SIGN IN
+                Sign In
               </Link>
             </motion.div>
           )}
