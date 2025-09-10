@@ -21,7 +21,7 @@ const LazyComponent = ({ Component }) => {
   return (
     <div ref={ref}>
       {inView && (
-        <Suspense fallback={<div className="h-[400px] flex items-center justify-center">Loading...</div>}>
+        <Suspense fallback={<div className="h-[400px] w-full flex items-center justify-center">Loading...</div>}>
           <Component />
         </Suspense>
       )}

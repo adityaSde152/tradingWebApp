@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-const Dropdown = ({ label, icon:  options, value, onChange }) => {
+const Dropdown = ({ label, icon: Icon, options, value, onChange }) => {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -33,6 +33,7 @@ const Dropdown = ({ label, icon:  options, value, onChange }) => {
         <input
           type="text"
           value={search !== "" ? search : value || ""}
+          required
           onChange={(e) => {
             setSearch(e.target.value);
             if (e.target.value === "") {
@@ -56,9 +57,9 @@ const Dropdown = ({ label, icon:  options, value, onChange }) => {
       {open && (
         <ul className="absolute z-10 mt-1 w-full max-h-40 overflow-y-auto bg-gray-800 border border-gray-700 rounded-lg shadow-lg">
           {filteredOptions.length > 0 ? (
-            filteredOptions.map((opt) => (
+            filteredOptions.map((opt, index) => (
               <li
-                key={opt}
+                key={index}
                 onClick={() => handleSelect(opt)}
                 className="px-4 py-2 text-gray-200 hover:bg-gray-700 cursor-pointer"
               >

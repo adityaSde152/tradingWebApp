@@ -68,9 +68,13 @@ export default function Scroll() {
   }, []);
 
   return (
-    <div ref={containerRef} className="w-full  h-screen bg-[#0B0F1A] text-white flex overflow-hidden  ">
+    <div
+      ref={containerRef}
+      className="w-full pt-10 h-screen bg-dark text-white flex flex-col sm:flex-row items-center sm:items-start overflow-hidden "
+    >
       {/* Left Side: Image */}
-      <div className="hidden md:flex w-1/2  items-center justify-center sticky top-0 h-screen">
+      <div className="flex  w-1/2 items-center justify-center sticky h-screen lg:bg-transparent">
+
         <img
           src={tradingCards[activeIndex].image}
           alt={tradingCards[activeIndex].title}
@@ -86,7 +90,9 @@ export default function Scroll() {
               key={idx}
               className="min-h-screen flex flex-col items-center justify-center px-8 text-center"
             >
-              <h2 className="text-5xl font-bold mb-4">{card.title}</h2>
+              <h2 className="text-3xl md:text-5xl font-bold mb-4">
+                {card.title}
+              </h2>
               <p className="text-lg text-gray-300">{card.description}</p>
             </div>
           ))}

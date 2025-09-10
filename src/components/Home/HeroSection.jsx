@@ -24,35 +24,33 @@ const HeroSection = () => {
   const headingText = "Trade\nSmarter,\nProfit Faster";
 
   return (
-    <div className="flex justify-center h-[110vh] bg-dark pt-12">
-      <div className="basis-1/2 flex flex-col gap-5 justify-center pl-30 h-[90vh]">
+    <div className="w-full flex flex-col-reverse lg:flex-row justify-center h-screen  pt-12 bg-dark">
+      <div className="w-full lg:w-1/2 py-6 mb-10  flex flex-col gap-2 md:gap-5 justify-center px-6 sm:px-10 md:px-12 lg:px-20 xl:px-25 bg-dark">
         <h1
           ref={headingRef}
-          className="text-white md:text-7xl text-8xl font-gideon-roman "
+          className="text-white text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-gideon-roman"
         >
           {headingText.split("").map((char, i) =>
             char === "\n" ? (
               <br key={i} />
             ) : (
-              <span key={i} className="inline-block">
+              <span key={i} className="lg:inline-block">
                 {char === " " ? "\u00A0" : char}
               </span>
             )
           )}
         </h1>
-        <p className="text-[#B8BCC2] w-[30vw]">
+        <p className="text-[#B8BCC2] text-sm lg:text-xl w-full">
           Step into the world of binary options with real-time data, powerful
           tools, and lighting-fast execution. Your future, one decision away.
         </p>
 
-        <button className="bg-green rounded text-lg text-white w-[200px] h-[50px]">
+        <button className="bg-green rounded text-lg text-white  w-44 h-12 lg:h-14 lg:w-66 font-semibold cursor-pointer hover:bg-green/90">
           Get Started Free
         </button>
       </div>
 
-      <div className=" bg-[rgb(0,11,18)] basis-1/2 pt-2">
-          <PlanetSection />
-      </div>
+      <PlanetSection />
     </div>
   );
 };

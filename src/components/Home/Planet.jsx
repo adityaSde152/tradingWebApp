@@ -149,9 +149,8 @@
 //   );
 // }
 
-
 import React, { Suspense, useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, useTexture, Html } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
@@ -175,35 +174,61 @@ function LocationPin({ lat, lon, label }) {
     <group position={position} ref={pinRef}>
       {/* Lucide Location Pin rendered in 3D space as HTML overlay */}
       <Html center occlude>
-  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", zIndex: 100 }}>
-    <MapPin
-      size={20}
-      color="limegreen"
-      style={{
-        filter: "drop-shadow(0 0 6px limegreen) drop-shadow(0 0 10px limegreen)",
-      }}
-    />
-    <span
-      style={{
-        color: "white",
-        fontSize: "10px",
-        background: "rgba(0,0,0,0.4)",
-        padding: "2px 4px",
-        borderRadius: "4px",
-        marginTop: "2px",
-        whiteSpace: "nowrap",
-      }}
-    >
-      {label}
-    </span>
-  </div>
-</Html>
-
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            zIndex: 100,
+          }}
+        >
+          <MapPin
+            size={20}
+            color="limegreen"
+            style={{
+              filter:
+                "drop-shadow(0 0 6px limegreen) drop-shadow(0 0 10px limegreen)",
+            }}
+          />
+          <span
+            style={{
+              color: "white",
+              fontSize: "10px",
+              background: "rgba(0,0,0,0.4)",
+              padding: "2px 4px",
+              borderRadius: "4px",
+              marginTop: "2px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {label}
+          </span>
+        </div>
+      </Html>
     </group>
   );
 }
 
 function Planet() {
+  const locations = [
+    { lat: 28.6139, lon: 77.209, label: "India" },
+    { lat: 51.5072, lon: -0.1276, label: "London" },
+    { lat: -33.8688, lon: 151.2093, label: "Sydney" },
+    { lat: 55.7558, lon: 37.6173, label: "Moscow" },
+    { lat: 34.0522, lon: -118.2437, label: "Los Angeles" },
+    { lat: -23.5505, lon: -46.6333, label: "São Paulo" },
+    { lat: 19.4326, lon: -99.1332, label: "Mexico City" },
+    { lat: -1.2921, lon: 36.8219, label: "Nairobi" },
+    { lat: 37.5665, lon: 126.978, label: "Seoul" },
+    { lat: -34.6037, lon: -58.3816, label: "Buenos Aires" },
+    { lat: 48.8566, lon: 2.3522, label: "Paris" },
+    { lat: 45.4215, lon: -75.6972, label: "Ottawa" },
+    { lat: 59.3293, lon: 18.0686, label: "Stockholm" },
+    { lat: 31.2304, lon: 121.4737, label: "Shanghai" },
+    { lat: 39.9042, lon: 116.4074, label: "Beijing" },
+    { lat: 25.2048, lon: 55.2708, label: "Dubai" },
+  ];
+
   const [colorMap, roughnessMap, bumpMap, cloudsMap] = useTexture([
     "/textures/exotic-planet/Exotic 02 (Diffuse 4k).png",
     "/textures/exotic-planet/Exotic 02 (Roughness 4k).png",
@@ -213,14 +238,21 @@ function Planet() {
 
   const planetRef = useRef();
   const cloudsRef = useRef();
+  const planetGroup = useRef();
+  const { viewport } = useThree();
 
   useFrame(() => {
     if (planetRef.current) planetRef.current.rotation.y += 0.002;
     if (cloudsRef.current) cloudsRef.current.rotation.y += 0.003;
+
+    if (planetGroup.current) {
+      const newScale = Math.min(viewport.width, viewport.height) / 2.3;
+      planetGroup.current.scale.set(newScale, newScale, newScale);
+    }
   });
 
   return (
-    <>
+    <group ref={planetGroup}>
       {/* Clouds */}
       <mesh ref={cloudsRef}>
         <sphereGeometry args={[1.02, 64, 64]} />
@@ -243,44 +275,25 @@ function Planet() {
           metalness={0.1}
           roughness={0.9}
         />
-        {/* ✅ Attach pins here so they rotate with planet */}
-        <LocationPin lat={28.6139} lon={77.209} label="India" />{" "}
-        {/* New Delhi */}
-        <LocationPin lat={51.5072} lon={-0.1276} label="London" /> {/* UK */}
-        <LocationPin lat={-33.8688} lon={151.2093} label="Sydney" />{" "}
-        {/* Australia */}
-        <LocationPin lat={55.7558} lon={37.6173} label="Moscow" />{" "}
-        {/* Russia */}
-        <LocationPin lat={34.0522} lon={-118.2437} label="Los Angeles" />{" "}
-        {/* USA */}
-        <LocationPin lat={-23.5505} lon={-46.6333} label="São Paulo" />{" "}
-        {/* Brazil */}
-        <LocationPin lat={19.4326} lon={-99.1332} label="Mexico City" />{" "}
-        {/* Mexico */}
-        <LocationPin lat={-1.2921} lon={36.8219} label="Nairobi" />{" "}
-        {/* Kenya */}
-        <LocationPin lat={37.5665} lon={126.978} label="Seoul" />{" "}
-        {/* South Korea */}
-        <LocationPin lat={-34.6037} lon={-58.3816} label="Buenos Aires" />{" "}
-        {/* Argentina */}
-        <LocationPin lat={48.8566} lon={2.3522} label="Paris" /> {/* France */}
-        <LocationPin lat={45.4215} lon={-75.6972} label="Ottawa" /> {/* Canada */}
-        <LocationPin lat={59.3293} lon={18.0686} label="Stockholm" />{" "}
-        {/* Sweden */}
-        <LocationPin lat={31.2304} lon={121.4737} label="Shanghai" />{" "}
-        {/* China */}
-        <LocationPin lat={39.9042} lon={116.4074} label="Beijing" />{" "}
-        {/* China */}
-        <LocationPin lat={25.2048} lon={55.2708} label="Dubai" /> {/* UAE */}
+
+        {locations.map((loc) => (
+          <LocationPin
+            key={loc.label}
+            lat={loc.lat}
+            lon={loc.lon}
+            label={loc.label}
+          />
+        ))}
       </mesh>
-    </>
+    </group>
   );
 }
 
 export default function PlanetSection() {
   return (
-    <div className="w-full h-[700px] bg-[rgb(0,11,18)]">
+    <div className="w-full lg:w-1/2 h-full min-h-[300px] pt-6 lg:pt-3 bg-dark">
       <Canvas
+        resize={{ scroll: true, debounce: { scroll: 50, resize: 50 } }}
         shadows
         camera={{ position: [0, 0, 3], fov: 45 }}
         gl={{ physicallyCorrectLights: true }}
@@ -293,7 +306,6 @@ export default function PlanetSection() {
           shadow-mapSize-width={2048}
           shadow-mapSize-height={2048}
         />
-        {/* Soft Fill Light */}
         <hemisphereLight
           skyColor={"#b5d9ff"}
           groundColor={"#222"}
