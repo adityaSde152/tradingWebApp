@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import assets from "../assets/assets";
 import { FcGoogle } from "react-icons/fc";
 import { BiDollarCircle, BiWorld } from "react-icons/bi";
-import { MdOutlineMail } from "react-icons/md";
+import { MdOutlineMail, MdPassword } from "react-icons/md";
 import { MdOutlineLock } from "react-icons/md";
 import { FaLink } from "react-icons/fa6";
 import { IoMdEye } from "react-icons/io";
@@ -13,23 +13,33 @@ import countryCurrencyData from "../assets/countryCurrencyData";
 const Login = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
-  const [selectedCountry, setSelectedCountry] = useState(null);
-  const [selectedCurrency, setSelectedCurrency] = useState(null);
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState("");
 
   const countryOptions = countryCurrencyData.map((c) => c.country);
   const currencyOptions = countryCurrencyData.map((c) => c.currency);
 
-  // Country selection on change
-  const handleCountryChange = (country) => {
-    setSelectedCountry(country);
-    const match = countryCurrencyData.find((c) => c.country === country);
-    setSelectedCurrency(match ? match.currency : "");
+  const initialFormData = {
+    country: "",
+    currency: "",
+    email: "",
+    password: "",
+    referral: "",
+  };
+  const [formData, setFormData] = useState(initialFormData);
+
+  const handleOnChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Currency change (manual selection allowed)
-  const handleCurrencyChange = (currency) => {
-    setSelectedCurrency(currency);
+  const handleOnSubmit = (e) => {
+    e.preventDefault();
+    if (isLogin) {
+      alert(`Call login API`);
+    } else {
+      alert(`Call register API`);
+    }
   };
   return (
     <div className="h-screen flex flex-col md:flex-row relative">
@@ -48,13 +58,16 @@ const Login = () => {
       <div className="md:w-1/2 h-full w-full flex items-center justify-center px-6 py-4 bg-black text-white">
         <div className="max-w-md w-full">
           <h2 className="text-2xl font-semibold text-center mb-4">
-            Welcome to Trading Platform
+            Welcome to Our Platform
           </h2>
 
-          {/* Tabs */}
+          {/* Switch Buttons b/w Register/Login */}
           <div className="flex justify-center mb-4">
             <button
-              onClick={() => setIsLogin(false)}
+              onClick={() => {
+                setIsLogin(false);
+                setFormData(initialFormData);
+              }}
               className={`px-6 py-2 ${
                 isLogin ? "bg-gray-800" : "bg-green-600"
               } text-white rounded-l-lg cursor-pointer`}
@@ -62,7 +75,10 @@ const Login = () => {
               Register
             </button>
             <button
-              onClick={() => setIsLogin(true)}
+              onClick={() => {
+                setIsLogin(true);
+                setFormData(initialFormData);
+              }}
               className={`px-6 py-2 ${
                 isLogin ? "bg-green-600" : "bg-gray-800"
               } rounded-r-lg cursor-pointer`}
@@ -72,35 +88,54 @@ const Login = () => {
           </div>
 
           {/* Form  */}
-          <form className={`${!isLogin ? "space-y-4" : "space-y-8"}`}>
+          <form
+            onSubmit={handleOnSubmit}
+            className={`${!isLogin ? "space-y-4" : "space-y-8"}`}
+          >
+            {/* Country Input */}
             {!isLogin && (
-              // Country
               <Dropdown
+                name="country"
                 label="Country"
                 icon={BiWorld}
                 options={countryOptions}
-                value={selectedCountry}
-                onChange={handleCountryChange}
+                value={formData.country}
+                onChange={(country) => {
+                  const match = countryCurrencyData.find(
+                    (c) => c.country === country
+                  );
+                  setFormData((prev) => ({
+                    ...prev,
+                    country,
+                    currency: match ? match.currency : "",
+                  }));
+                }}
               />
             )}
 
+            {/* Currency Input */}
             {!isLogin && (
-              // Currency
               <Dropdown
+                name="currency"
                 label="Currency"
                 icon={BiDollarCircle}
                 options={currencyOptions}
-                value={selectedCurrency}
-                onChange={handleCurrencyChange}
+                value={formData.currency}
+                onChange={(currency) =>
+                  setFormData((prev) => ({ ...prev, currency }))
+                }
               />
             )}
 
-            {/* Email */}
+            {/* Email Input */}
             <div className="relative w-full">
               <input
                 type="email"
-                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleOnChange}
                 autoComplete="email"
+                required
                 placeholder=" "
                 className="peer w-full px-4 pl-8 pt-4 pb-2 rounded-lg border border-gray-700 text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-green-500"
               />
@@ -115,12 +150,16 @@ const Login = () => {
               </label>
             </div>
 
-            {/* Password */}
+            {/* Password Input */}
             <div className="relative w-full">
               <input
+                name="password"
                 type={showPassword ? "text" : "password"}
                 id="password"
+                value={formData.password}
+                onChange={handleOnChange}
                 autoComplete="current-password"
+                required
                 placeholder=" "
                 className="peer w-full px-4 pl-8 pt-4 pb-2 rounded-lg  border border-gray-700 text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-green-500"
               />
@@ -148,11 +187,15 @@ const Login = () => {
               </label>
             </div>
 
+            {/* Referral Input */}
             {!isLogin && ( // Referral
               <div className="relative w-full">
                 <input
+                  name="referral"
                   type="text"
                   id="referral"
+                  value={formData.referral}
+                  onChange={handleOnChange}
                   placeholder=" "
                   className="peer w-full px-4 pl-8 pt-4 pb-2 rounded-lg border border-gray-700 text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
@@ -177,12 +220,35 @@ const Login = () => {
               </span>
             </label>
 
+            {/* OTP input Box */}
+            {!isLogin && otpSent && (
+              <div className="relative w-full">
+                <input
+                  type="text"
+                  name="otp"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  placeholder="Enter OTP"
+                  className="peer w-full px-4 pl-8 pt-4 pb-2 rounded-lg border border-gray-700 text-white 
+                 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+                <label
+                  htmlFor="otp"
+                  className="absolute left-8 top-2.5 text-gray-400 transition-all
+                peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-gray-500
+                peer-focus:-top-3 bg-black peer-focus:text-green-500"
+                >
+                  Enter OTP
+                </label>
+              </div>
+            )}
+
             {/* Register Button */}
             <button
               type="submit"
               className="w-full bg-green-600 hover:bg-green-700 py-2 rounded-lg text-white font-semibold cursor-pointer"
             >
-              {isLogin ? "Login →" : "Register →"}
+              {isLogin ? "Login →" : otpSent ? "Verify" : "Register →"}
             </button>
           </form>
 
