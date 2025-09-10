@@ -19,6 +19,7 @@ import Modile_img3 from "../assets/Phone-img3.png";
 import Modile_img4 from "../assets/Phone-img4.png";
 import Modile_img5 from "../assets/Phone-img5.png";
 import Modile_img6 from "../assets/Phone-img6.png";
+import Modile_img8 from "../assets/Phone-img8.png";
 import logo from "../assets/logo.png";
 
 export default {
@@ -34,7 +35,6 @@ export default {
   resources,
   Green_hornet,
   login_hero_img,
-<<<<<<< HEAD
   day_night,
   Night,
   Day,
@@ -43,8 +43,7 @@ export default {
   Modile_img3,
   Modile_img4,
   Modile_img5,
-  Modile_img6
-=======
+  Modile_img6,
   logo,
->>>>>>> 798405321a84552558203ddbb80d2a19de55ed72
+  Modile_img8,
 };

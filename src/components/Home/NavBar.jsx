@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import assets from "../assets/assets";
+import assets from "../../assets/assets";
 
 export default function Navbar() {
   const navItems = (

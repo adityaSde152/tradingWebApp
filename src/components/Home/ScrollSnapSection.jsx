@@ -9,7 +9,7 @@ const tradingCards = [
   {
     title: "Live Data",
     description: "Monitor the markets in real-time for smarter decisions.",
-    image: assets.Modile_img1,
+    image: assets.Modile_img8,
   },
   {
     title: "Instant Payouts",
@@ -68,13 +68,13 @@ export default function Scroll() {
   }, []);
 
   return (
-    <div ref={containerRef} className="w-full h-screen bg-[#0B0F1A] text-white flex overflow-hidden  ">
+    <div ref={containerRef} className="w-full  h-screen bg-[#0B0F1A] text-white flex overflow-hidden  ">
       {/* Left Side: Image */}
-      <div className="hidden md:flex w-1/2 items-center justify-center sticky top-0 h-screen">
+      <div className="hidden md:flex w-1/2  items-center justify-center sticky top-0 h-screen">
         <img
           src={tradingCards[activeIndex].image}
           alt={tradingCards[activeIndex].title}
-          className="w-[400px] h-[400px] object-cover rounded-2xl shadow-2xl"
+          className="w-[400px] h-[400px] object-contain rounded-2xl shadow-2xl"
         />
       </div>
 
