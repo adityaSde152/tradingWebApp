@@ -4,7 +4,7 @@ import PlanetCardModel from "../PlanetCardModel";
 const MetallicCard = () => {
   return (
     <div className="relative">
-      <div className="absolute right-[33%] -bottom-[29vh] w-[35%] h-[40vh] aspect-[1.586] rounded-2xl border border-black bg-gradient-to-br from-black via-neutral-950 to-black shadow-2xl overflow-hidden p-6 flex flex-col justify-between">
+      <div className="absolute  left-1/2 -translate-x-1/2 -translate-y-1/2 md:-bottom-[45vh] w-[18] sm:w-[25] md:w-[33] h-[24vh] sm:h-[33vh] md:h-[40vh] aspect-[1.586] rounded-2xl border border-black bg-gradient-to-br from-black via-neutral-950 to-black shadow-2xl overflow-hidden p-6 flex flex-col justify-between">
         
         {/* Shiny reflection */}
         <div
@@ -15,17 +15,17 @@ const MetallicCard = () => {
         {/* Card Content */}
         <div className="relative z-10 flex justify-between items-center">
           <div>
-            <h2 className="text-white font-bold text-lg tracking-widest">
+            <h2 className="text-white font-bold text-xs md:text-lg tracking-widest">
               PLATINUM MEMBER
             </h2>
-            <p className="text-white/90 text-xl tracking-widest my-6">
+            <p className="text-white/90 text-xs md:text-xl tracking-widest my-6">
               **** **** **** 1234
             </p>
-            <p className="text-gray-300 text-sm">Valid Thru: 09/30</p>
+            <p className="text-gray-300 text-xs sm:text-sm">Valid Thru: 09/30</p>
           </div>
 
           {/* Embedded 3D Earth */}
-          <div className="w-[300px] h-[300px]">
+          <div className="w-[200px] sm:w-[300px] h-[180px] sm:h-[300px]">
             <PlanetCardModel />
           </div>
         </div>
