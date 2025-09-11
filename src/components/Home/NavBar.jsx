@@ -69,7 +69,7 @@ export default function Navbar() {
             : "w-full"
         } text-white`}
       >
-        <div className="lg:px-20">
+        <div className="px-4 lg:px-20">
           <div className="flex justify-between items-center h-16">
             {/* Left section */}
             <Link to={"/"} className="flex items-center space-x-2">
