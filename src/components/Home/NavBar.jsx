@@ -104,7 +104,7 @@ export default function Navbar() {
                 to={"/login"}
                 className={({ isActive }) =>
                   `${
-                    isActive && "text-green"
+                    isActive && "text-green hover:text-white"
                   } text-sm px-2 py-1 rounded-full hover:bg-green  hover:border-gray-600 duration-300`
                 }
               >

@@ -22,6 +22,7 @@ const App = () => {
         {/* Dashboard Routes */}
         <Route path="/dashboard" element={<DashboardMainNavigation />}>
           <Route index element={<Dashboard />} />
+          <Route path="profile" element={<Dashboard />} />
           <Route path="*" element={<PageNotFound />} />
         </Route>
         <Route path="*" element={<PageNotFound />} />
