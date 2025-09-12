@@ -42,10 +42,10 @@ const Login = () => {
     }
   };
   return (
-    <div className="h-screen flex flex-col md:flex-row relative">
+    <div className="h-screen flex flex-col md:flex-row relative bg-gradient-to-r from-[#0a0f14] via-transparent to-[#0a0f14]">
       {/* Left Side - Image */}
 
-      <div className="relative md:w-1/2 hidden w-full h-full md:flex justify-start items-start bg-[#0a0f14] overflow-hidden">
+      <div className="relative md:w-1/2 hidden w-full h-full md:flex justify-start items-start  bg-dark overflow-hidden">
         <img
           src={assets.login_hero_img}
           alt="Trading Illustration"
@@ -55,7 +55,7 @@ const Login = () => {
       </div>
 
       {/* Right Side - Form */}
-      <div className="md:w-1/2 h-full w-full flex items-center justify-center px-6 py-4 bg-black text-white">
+      <div className="md:w-1/2 relative h-full w-full flex items-center justify-center px-6 py-4 bg-[#090e14] text-white">
         <div className="max-w-md w-full">
           <h2 className="text-2xl font-semibold text-center mb-4">
             Welcome to Our Platform
@@ -90,7 +90,7 @@ const Login = () => {
           {/* Form  */}
           <form
             onSubmit={handleOnSubmit}
-            className={`${!isLogin ? "space-y-4" : "space-y-8"}`}
+            className={`${!isLogin ? "space-y-3" : "space-y-8"}`}
           >
             {/* Country Input */}
             {!isLogin && (
