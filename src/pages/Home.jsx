@@ -16,12 +16,14 @@ const DayNight = lazy(() => import("../components/Home/DayNight"));
 const Home = () => {
   return (
     <div>
-      {/* <HeroSection /> */}
+      <HeroSection />
+
       <FeaturesSection />
 
       {/* Lazy load heavy sections */}
       <LazyComponent Component={ScrollSnapSection} />
       <TrustedSection />
+
       <LazyComponent Component={DayNight} />
 
       {/* <DayNight /> */}

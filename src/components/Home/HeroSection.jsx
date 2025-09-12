@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { lazy, useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import PlanetSection from "./Planet";
 
@@ -17,6 +17,7 @@ const HeroSection = () => {
         stagger: 0.05,
         ease: "power3.out",
         duration: 0.5,
+        delay: 2,
       }
     );
   }, []);
