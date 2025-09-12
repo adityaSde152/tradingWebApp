@@ -37,18 +37,18 @@ const Stairs = ({ children }) => {
   }, [currentPath])
 
   return (
-    <div className="overflow-hidden relative">
+    <div className="relative">
       {/* Loader */}
       <div
         ref={stairParentRef}
         className="h-screen w-full fixed inset-0 z-20 overflow-hidden"
       >
         <div className="h-full w-full flex">
-          <div className="stair flex-1 bg-black"></div>
-          <div className="stair flex-1 bg-black"></div>
-          <div className="stair flex-1 bg-black"></div>
-          <div className="stair flex-1 bg-black"></div>
-          <div className="stair flex-1 bg-black"></div>
+          <div className="stair flex-1 bg-white"></div>
+          <div className="stair flex-1 bg-white"></div>
+          <div className="stair flex-1 bg-white"></div>
+          <div className="stair flex-1 bg-white"></div>
+          <div className="stair flex-1 bg-white"></div>
         </div>
       </div>
 
