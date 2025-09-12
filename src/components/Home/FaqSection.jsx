@@ -22,7 +22,7 @@ const FaqSection = () => {
   };
 
   return (
-    <div className="bg-[#0b0f1a]  min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+    <div className="bg-[#0b0f1a]  h-full my-4 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         <h2 className="text-white text-3xl font-bold text-center mb-6">FAQs Section</h2>
         <div className="space-y-3">
