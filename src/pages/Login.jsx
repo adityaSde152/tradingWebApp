@@ -12,6 +12,8 @@ import countryCurrencyData from "../assets/countryCurrencyData";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
   const { saveAccessToken } = useContext(AuthContext);
