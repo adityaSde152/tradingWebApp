@@ -12,8 +12,6 @@ import countryCurrencyData from "../assets/countryCurrencyData";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
   const { saveAccessToken } = useContext(AuthContext);
@@ -54,6 +52,7 @@ const Login = () => {
         );
         console.log(response);
         if (response.data.success) {
+          saveAccessToken(response.data.accessToken);
           setIsOtpSent(true);
           setUser(response.data.user);
         }
@@ -72,7 +71,7 @@ const Login = () => {
         );
         if (response.data.success) {
           toast.success(response.data.message);
-          saveAccessToken(response.data.accessToken);
+          saveAccessToken(response.data.accessToken)
           setUser(response.data.user);
           navigate("/dashboard/profile");
         }
