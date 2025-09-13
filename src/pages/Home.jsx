@@ -6,6 +6,7 @@ import HeroSection from "../components/Home/HeroSection";
 import FeaturesSection from "../components/Home/FeaturesSection";
 import TrustedSection from "../components/Home/TrustedSection";
 import FaqSection from "../components/Home/FaqSection";
+import DayNightA from "../components/Home/DayNightA";
 
 // Lazy load heavy components
 const ScrollSnapSection = lazy(() => import("../components/Home/ScrollSnapSection"));
@@ -39,6 +40,7 @@ const Home = () => {
       <LazyComponent Component={ScrollSnapSection} />
       <TrustedSection />
       {/* <LazyComponent Component={DayNight} /> */}
+      <DayNightA/>
       <FaqSection />
       <LazyComponent Component={MetallicCard} />
 
