@@ -1,17 +1,30 @@
-import React, { Suspense, useRef } from "react";
+import React, { Suspense, use, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, useGLTF, Html } from "@react-three/drei";
 
 import { FaBitcoin, FaEthereum } from "react-icons/fa";
-import { SiLitecoin, SiDogecoin, SiCardano, SiPolkadot, SiRipple } from "react-icons/si";
+import {
+  SiLitecoin,
+  SiDogecoin,
+  SiCardano,
+  SiPolkadot,
+  SiRipple,
+} from "react-icons/si";
+import CandlestickLoader from "./Common/CandleStickLoader";
 
 const EarthModel = () => {
-  const { scene } = useGLTF("/models/Earth2.glb");
+  const { scene } = useGLTF("/models/Earth2-v1.glb");
   return <primitive object={scene} scale={0.0025} position={[0, 0.3, 0]} />; // larger model
 };
 
 // Single coin in orbit
-const CurrencyCoin = ({ radius = 2.5, speed = 0.01, Icon, shadowColor = "#00FF00", initialAngle = 0 }) => {
+const CurrencyCoin = ({
+  radius = 2.5,
+  speed = 0.01,
+  Icon,
+  shadowColor = "#00FF00",
+  initialAngle = 0,
+}) => {
   const groupRef = useRef();
   const angleRef = useRef(initialAngle);
 
@@ -37,6 +50,8 @@ const CurrencyCoin = ({ radius = 2.5, speed = 0.01, Icon, shadowColor = "#00FF00
     </group>
   );
 };
+
+useGLTF.preload("/models/Earth2-v1.glb");
 
 const CurrencyOrbits = () => {
   const coins = [
@@ -89,7 +104,7 @@ export default function PlanetCardModel() {
     <Canvas camera={{ position: [0, 0, 12], fov: 35 }}>
       <ambientLight intensity={0.8} />
       <directionalLight position={[5, 5, 5]} intensity={1.2} />
-      <Suspense fallback={null}>
+      <Suspense fallback={<CandlestickLoader />}>
         <PlanetWithCoins />
       </Suspense>
       <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.5} />

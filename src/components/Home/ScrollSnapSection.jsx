@@ -41,54 +41,209 @@ const tradingCards = [
 export default function Scroll() {
   const containerRef = useRef(null);
   const textWrapperRef = useRef(null);
+  const imageRef = useRef(null);
+  const lastIndexRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
 
+  // useEffect(() => {
+  //   const ctx = gsap.context(() => {
+  //     const totalHeight = tradingCards.length * window.innerHeight;
+
+  //     // Ensure image starts visible
+  //     if (imageRef.current) {
+  //       gsap.set(imageRef.current, { autoAlpha: 1, scale: 1, force3D: true });
+  //     }
+
+  //     // Scroll vertical for text
+  //     gsap.to(textWrapperRef.current, {
+  //       y: () => `-${window.innerHeight * (tradingCards.length - 1)}px`,
+  //       ease: "none",
+  //       scrollTrigger: {
+  //         trigger: containerRef.current,
+  //         start: "top top",
+  //         end: () => `+=${totalHeight}`,
+  //         scrub: true,
+  //         pin: true,
+  //         onUpdate: (self) => {
+  //           const index = Math.round(
+  //             Math.min(Math.max(self.progress, 0), 1) *
+  //               (tradingCards.length - 1)
+  //           );
+
+  //           if (index !== lastIndexRef.current) {
+  //             lastIndexRef.current = index;
+
+  //             if (imageRef.current) {
+  //               gsap.to(imageRef.current, {
+  //                 autoAlpha: 0,
+  //                 scale: 0.96,
+  //                 duration: 0.18,
+  //                 ease: "power1.in",
+  //                 overwrite: "auto",
+  //                 onComplete: () => {
+  //                   setActiveIndex(index);
+  //                   gsap.fromTo(
+  //                     imageRef.current,
+  //                     { autoAlpha: 0, scale: 0.96 },
+  //                     {
+  //                       autoAlpha: 1,
+  //                       scale: 1,
+  //                       duration: 0.45,
+  //                       ease: "power2.out",
+  //                       overwrite: "auto",
+  //                     }
+  //                   );
+  //                 },
+  //               });
+  //             } else {
+  //               setActiveIndex(index);
+  //             }
+  //           }
+  //         },
+  //       },
+  //     });
+
+  //     // ✅ Mobile: fade text color when behind image
+  //     ScrollTrigger.matchMedia({
+  //       "(max-width: 767px)": function () {
+  //         tradingCards.forEach((_, i) => {
+  //           const textEl = textWrapperRef.current.children[i];
+
+  //           gsap.to(textEl, {
+  //             opacity: 0, // hide when overlapped
+  //             ease: "none",
+  //             scrollTrigger: {
+  //               trigger: textEl,
+  //               start: () =>
+  //                 `top ${
+  //                   imageRef.current.offsetTop +
+  //                   imageRef.current.offsetHeight / 2
+  //                 }`,
+  //               end: () =>
+  //                 `bottom ${
+  //                   imageRef.current.offsetTop +
+  //                   imageRef.current.offsetHeight / 2
+  //                 }`,
+  //               scrub: true,
+  //             },
+  //           });
+  //         });
+  //       },
+  //     });
+  //   }, containerRef);
+
+  //   return () => ctx.revert();
+  // }, []);
+
   useEffect(() => {
-    const totalHeight = tradingCards.length * window.innerHeight;
+    const ctx = gsap.context(() => {
+      const totalHeight = tradingCards.length * window.innerHeight;
 
-    gsap.to(textWrapperRef.current, {
-      y: () => `-${window.innerHeight * (tradingCards.length - 1)}px`,
-      ease: "none",
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: "top top",
-        end: () => `+=${totalHeight}`,
-        scrub: true,
-        pin: true,
-        onUpdate: (self) => {
-          const index = Math.round(self.progress * (tradingCards.length - 1));
-          setActiveIndex(index);
+      // Ensure image starts visible
+      if (imageRef.current) {
+        gsap.set(imageRef.current, { autoAlpha: 1, scale: 1, force3D: true });
+      }
+
+      // Scroll vertical for text
+      gsap.to(textWrapperRef.current, {
+        y: () => `-${window.innerHeight * (tradingCards.length - 1)}px`,
+        ease: "none",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top top",
+          end: () => `+=${totalHeight}`,
+          scrub: true,
+          pin: true,
+          onUpdate: (self) => {
+            const index = Math.round(
+              Math.min(Math.max(self.progress, 0), 1) *
+                (tradingCards.length - 1)
+            );
+
+            if (index !== lastIndexRef.current) {
+              lastIndexRef.current = index;
+
+              if (imageRef.current) {
+                gsap.to(imageRef.current, {
+                  autoAlpha: 0,
+                  scale: 0.96,
+                  duration: 0.18,
+                  ease: "power1.in",
+                  overwrite: "auto",
+                  onComplete: () => {
+                    setActiveIndex(index);
+                    gsap.fromTo(
+                      imageRef.current,
+                      { autoAlpha: 0, scale: 0.96 },
+                      {
+                        autoAlpha: 1,
+                        scale: 1,
+                        duration: 0.45,
+                        ease: "power2.out",
+                        overwrite: "auto",
+                      }
+                    );
+                  },
+                });
+              } else {
+                setActiveIndex(index);
+              }
+            }
+
+            // ✅ Only apply overlap check on small screens
+            ScrollTrigger.matchMedia({
+              "(max-width: 767px)": function () {
+                tradingCards.forEach((_, i) => {
+                  const textEl = textWrapperRef.current.children[i];
+
+                  gsap.fromTo(
+                    textEl,
+                    { opacity: 1 },
+                    {
+                      opacity: 0,
+                      ease: "none",
+                      scrollTrigger: {
+                        trigger: textEl,
+                        start: "top 40%", // when text top hits mid viewport
+                        end: "center 50%", // when text center passes mid viewport
+                        scrub: true, // smooth fade tied to scroll
+                      },
+                    }
+                  );
+                });
+              },
+            });
+          },
         },
-      },
-    });
+      });
+    }, containerRef);
 
-    return () => {
-      ScrollTrigger.getAll().forEach((t) => t.kill());
-    };
+    return () => ctx.revert();
   }, []);
 
   return (
     <div
       ref={containerRef}
-      className="w-full pt-10 h-screen bg-dark text-white flex flex-col sm:flex-row items-center sm:items-start overflow-hidden "
+      className="w-full pt-10 h-screen bg-dark text-white flex flex-col sm:flex-row items-center sm:items-start overflow-hidden"
     >
       {/* Left Side: Image */}
-      <div className="flex  w-1/2 items-center justify-center sticky h-screen lg:bg-transparent">
-
+      <div className="flex w-full md:w-1/2 bg-dark items-center justify-center top-0 pt-20 sm:pt-0 sticky h-screen pointer-events-none z-20">
         <img
+          ref={imageRef}
           src={tradingCards[activeIndex].image}
           alt={tradingCards[activeIndex].title}
-          className="w-[400px] h-[400px] object-contain rounded-2xl shadow-2xl"
+          className="w-[300px] sm:w-[400px] h-[300px] sm:h-[400px] object-contain rounded-2xl shadow-2xl will-change-transform will-change-opacity"
+          loading="lazy"
         />
       </div>
 
       {/* Right Side: Text */}
-      <div className="flex-1">
+      <div className="flex-1 z-10">
         <div ref={textWrapperRef} className="flex flex-col w-full">
           {tradingCards.map((card, idx) => (
             <div
               key={idx}
-              className="min-h-screen flex flex-col items-center justify-center px-8 text-center"
+              className="min-h-screen flex flex-col items-center justify-center px-8 pb-22 text-center"
             >
               <h2 className="text-3xl md:text-5xl font-bold mb-4">
                 {card.title}
