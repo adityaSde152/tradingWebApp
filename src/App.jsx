@@ -7,10 +7,20 @@ import PageNotFound from "./pages/PageNotFound";
 import MainNavigation from "./components/MainNavigation";
 import DashboardMainNavigation from "./components/Dashboard/DashboardMainNavigation";
 import Login from "./pages/Login";
+import { Toaster } from "react-hot-toast";
 
 const App = () => {
   return (
     <>
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+        gutter={8}
+        toastOptions={{
+          duration: 4000,
+          style: { fontSize: "14px" },
+        }}
+      />
       <ChatBot />
       <Routes>
         <Route path="/" element={<MainNavigation />}>
