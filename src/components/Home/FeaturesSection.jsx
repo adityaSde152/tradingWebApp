@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 const features = [
@@ -12,7 +12,8 @@ const features = [
   },
   {
     title: "Easy UI",
-    description: "Intuitive Interface Designed for Novice and Experienced Users",
+    description:
+      "Intuitive Interface Designed for Novice and Experienced Users",
   },
 ];
 
@@ -27,50 +28,91 @@ const containerVariants = {
   },
 };
 
-
-
-// Card animation (fade only, no movement)
-// const cardVariants = {
-//   hidden: { opacity: 0 },
-//   visible: {
-//     opacity: 1,
-//     transition: { duration: 0.5, ease: "easeOut" },
-//   },
-// };
-
 const FeaturesSection = () => {
+  const [positions, setPositions] = useState(["center", "left", "right"]);
+
+  // Rotate cards every 3 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPositions((prev) => [prev[2], prev[0], prev[1]]);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Position styles
+  const getPositionStyles = (pos) => {
+    switch (pos) {
+      case "center":
+        return { left: "50%", scale: 1, zIndex: 20, opacity: 1, x: "-50%" };
+      case "left":
+        return { left: "30%", scale: 0.8, zIndex: 10, opacity: 0.6, x: "-50%" };
+      case "right":
+        return { left: "70%", scale: 0.8, zIndex: 10, opacity: 0.6, x: "-50%" };
+      default:
+        return {};
+    }
+  };
+
   return (
     <motion.section
-      className="w-full mx-auto absolute top-[100vh] flex items-center justify-evenly gap-6"
+      className="w-full mx-auto bg-dark py-2 flex items-center justify-evenly px-4 lg:px-20 lg:gap-6"
       variants={containerVariants}
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.3 }}
     >
-      {features.map((feature, idx) => (
-        <motion.div
-          key={idx}
-          whileHover={{ scale: 1.08, rotate: 1 }}
-          transition={{ type: "spring", stiffness: 300 }}
-          className="relative z-50 w-[25vw] h-[30vh] bg-white rounded-2xl shadow-xl overflow-hidden group cursor-pointer"
-        >
-          <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-[#38D300] group-hover:shadow-[0_0_30px_#38D300] transition-all duration-500"></div>
-            <div
-            className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-repeat bg-[#ffffff] opacity-90"
-            ></div>
+      {/* Large screen layout (unchanged) */}
+      <div className="hidden md:flex items-center justify-evenly gap-6 w-full">
+        {features.map((feature, idx) => (
+          // your same motion.div card here
+          <motion.div
+            key={idx}
+            whileHover={{ scale: 1.08, rotate: 1 }}
+            transition={{ type: "spring", stiffness: 300 }}
+            className="relative w-full z-50  h-[20vh] lg:h-[30vh] py-6 bg-white rounded-2xl shadow-xl overflow-hidden group cursor-pointer"
+          >
+            <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-[#38D300] group-hover:shadow-[0_0_30px_#38D300] transition-all duration-500"></div>
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-repeat bg-[#ffffff] opacity-90"></div>
             {/* Floating circles for decoration */}
             <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#38D300]/20 rounded-full blur-3xl group-hover:animate-ping"></div>
             <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-[#38D300]/20 rounded-full blur-2xl group-hover:animate-ping"></div>
 
             <div className="absolute inset-0 rounded-2xl border-4 border-transparent group-hover:border-[#38D300] group-hover:shadow-[0_0_30px_#38D300] transition-all duration-500"></div>
 
-
             <div className="relative flex flex-col justify-center items-center h-full text-center px-6 hover:text-[#38D300]">
-            <h2 className="text-xl font-bold text-black mb-3">{feature.title}</h2>
-            <p className="text-gray-700">{feature.description}</p>
+              <h2 className="text-xl font-bold text-black mb-3">
+                {feature.title}
+              </h2>
+              <p className="text-gray-700">{feature.description}</p>
             </div>
-            </motion.div>
-      ))}
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Small screen sliding animation */}
+      <div className="flex md:hidden relative w-full h-[20vh] justify-center items-center overflow-hidden">
+        {features.map((feature, idx) => (
+          <motion.div
+            key={idx}
+            animate={getPositionStyles(positions[idx])}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+            className="absolute w-[60vw] h-[20vh] bg-white rounded-2xl shadow-xl overflow-hidden group cursor-pointer"
+          >
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-repeat bg-[#ffffff] opacity-90"></div>
+
+            {/* Floating circles for decoration */}
+            <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#38D300]/20 rounded-full blur-3xl group-hover:animate-ping"></div>
+            <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-[#38D300]/20 rounded-full blur-2xl group-hover:animate-ping"></div>
+
+            <div className="relative flex flex-col justify-center items-center h-full text-center px-2">
+              <h2 className="text-xl font-bold text-black mb-3">
+                {feature.title}
+              </h2>
+              <p className="text-sm text-gray-700">{feature.description}</p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
     </motion.section>
   );
 };

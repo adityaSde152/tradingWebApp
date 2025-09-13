@@ -12,7 +12,6 @@ import Green_hornet from "../assets/Green-hornet.webp";
 import login_hero_img from "../assets/login_hero_img.png";
 import day_night from "../assets/Day-Night.png";
 import Night from "../assets/night.jpg";
-import Day from "../assets/day.jpg";
 import Mobile_img1 from "../assets/Phone-img1.png";
 import Mobile_img2 from "../assets/Phone-img2.png";
 import Mobile_img3 from "../assets/Phone-img3.png";
@@ -21,6 +20,7 @@ import Mobile_img5 from "../assets/Phone-img5.png";
 import Mobile_img6 from "../assets/Phone-img6.png";
 import Mobile_img8 from "../assets/Phone-img8.png";
 import logo from "../assets/logo.png";
+import Day from "../assets/Day.jpg";
 
 export default {
   hero_img,
@@ -45,5 +45,5 @@ export default {
   Mobile_img5,
   Mobile_img6,
   logo,
- Mobile_img8
+  Mobile_img8,
 };

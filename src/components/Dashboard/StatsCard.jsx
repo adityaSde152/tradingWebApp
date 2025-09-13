@@ -55,7 +55,7 @@ const StatsCard = () => {
       {statsData.map((stat) => (
         <div
           key={stat.id}
-          className="bg-gray-800 rounded-2xl shadow-md p-3 flex flex-col gap-3 w-full max-w-sm mx-auto"
+          className="bg-gray-800 rounded-2xl shadow-md px-4 py-6 flex flex-col gap-3 w-full h-full max-w-sm mx-auto"
         >
           {/* Icon */}
           <div className="w-10 h-10 flex items-center justify-center rounded-lg shadow-md shadow-green-500/30 bg-gray-900 text-green-500">
