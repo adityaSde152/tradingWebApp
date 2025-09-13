@@ -8,6 +8,7 @@ import MainNavigation from "./components/MainNavigation";
 import DashboardMainNavigation from "./components/Dashboard/DashboardMainNavigation";
 import Login from "./pages/Login";
 import { Toaster } from "react-hot-toast";
+import Market from "./pages/Market";
 
 const App = () => {
   return (
@@ -32,7 +33,6 @@ const App = () => {
         {/* Dashboard Routes */}
         <Route path="/dashboard" element={<DashboardMainNavigation />}>
           <Route index element={<Dashboard />} />
-          <Route path="profile" element={<Dashboard />} />
           <Route path="*" element={<PageNotFound />} />
         </Route>
         <Route path="*" element={<PageNotFound />} />
