@@ -69,7 +69,7 @@ export default function Navbar() {
             : "w-full"
         } text-white`}
       >
-        <div className="lg:px-20">
+        <div className="px-4 lg:px-20">
           <div className="flex justify-between items-center h-16">
             {/* Left section */}
             <Link to={"/"} className="flex items-center space-x-2">
@@ -104,7 +104,7 @@ export default function Navbar() {
                 to={"/login"}
                 className={({ isActive }) =>
                   `${
-                    isActive && "text-green"
+                    isActive && "text-green hover:text-white"
                   } text-sm px-2 py-1 rounded-full hover:bg-green  hover:border-gray-600 duration-300`
                 }
               >

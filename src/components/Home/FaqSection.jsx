@@ -22,10 +22,10 @@ const FaqSection = () => {
   };
 
   return (
-    <div className="bg-[#0b0f1a]  min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+    <div className="bg-[#0b0f1a]  h-full my-4 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
-        <h2 className="text-white text-3xl font-bold text-center mb-8">FAQs Section</h2>
-        <div className="space-y-4">
+        <h2 className="text-white text-3xl font-bold text-center mb-6">FAQs Section</h2>
+        <div className="space-y-3">
           {faqs.map((faq, index) => (
             <div
               key={index}
@@ -34,7 +34,7 @@ const FaqSection = () => {
               }`}
               onClick={() => toggleFAQ(index)}
             >
-              <div className="flex justify-between items-center p-4 text-white font-medium text-base">
+              <div className="flex justify-between items-center px-4 py-2 text-white font-medium text-base">
                 <span>{faq.question}</span>
                 <span className="text-gray-400 text-xl">
                   {openIndex === index ? '−' : '+'}

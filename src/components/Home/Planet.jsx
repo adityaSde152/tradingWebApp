@@ -150,11 +150,12 @@
 // }
 
 import React, { Suspense, useRef } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import { OrbitControls, useTexture, Html } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
 import { MapPin } from "lucide-react"; // ✅ Lucide icon
+import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader";
 
 function LocationPin({ lat, lon, label }) {
   const pinRef = useRef();
@@ -210,6 +211,7 @@ function LocationPin({ lat, lon, label }) {
 }
 
 function Planet() {
+  const { gl } = useThree();
   const locations = [
     { lat: 28.6139, lon: 77.209, label: "India" },
     { lat: 51.5072, lon: -0.1276, label: "London" },
@@ -228,13 +230,19 @@ function Planet() {
     { lat: 39.9042, lon: 116.4074, label: "Beijing" },
     { lat: 25.2048, lon: 55.2708, label: "Dubai" },
   ];
-
-  const [colorMap, roughnessMap, bumpMap, cloudsMap] = useTexture([
-    "/textures/exotic-planet/Exotic 02 (Diffuse 4k).png",
-    "/textures/exotic-planet/Exotic 02 (Roughness 4k).png",
-    "/textures/exotic-planet/Exotic 02 (Bump 4k).png",
-    "/textures/exotic-planet/Exotic 02 (Clouds 4k).png",
-  ]);
+  const [colorMap, roughnessMap, bumpMap, cloudsMap] = useLoader(
+    KTX2Loader,
+    [
+      "/textures/exotic-planet/Exotic 02 (Diffuse 4k).ktx2",
+      "/textures/exotic-planet/Exotic 02 (Roughness 4k).ktx2",
+      "/textures/exotic-planet/Exotic 02 (Bump 4k).ktx2",
+      "/textures/exotic-planet/Exotic 02 (Clouds 4k).ktx2",
+    ],
+    (loader) => {
+      loader.setTranscoderPath("/basis/"); // you need to host basis_transcoder .wasm/.js in /public/basis/
+      loader.detectSupport(gl);
+    }
+  );
 
   const planetRef = useRef();
   const cloudsRef = useRef();
@@ -255,7 +263,13 @@ function Planet() {
     <group ref={planetGroup}>
       {/* Clouds */}
       <mesh ref={cloudsRef}>
-        <sphereGeometry args={[1.02, 64, 64]} />
+        <sphereGeometry
+          args={[
+            1.02,
+            window.innerWidth < 768 ? 32 : 64,
+            window.innerWidth < 768 ? 32 : 64,
+          ]}
+        />
         <meshStandardMaterial
           map={cloudsMap}
           transparent
@@ -266,7 +280,13 @@ function Planet() {
 
       {/* Main Planet with Pins as Children */}
       <mesh ref={planetRef} castShadow receiveShadow>
-        <sphereGeometry args={[1, 64, 64]} />
+        <sphereGeometry
+          args={[
+            1,
+            window.innerWidth < 768 ? 32 : 64,
+            window.innerWidth < 768 ? 32 : 64,
+          ]}
+        />
         <meshStandardMaterial
           map={colorMap}
           roughnessMap={roughnessMap}
@@ -282,6 +302,7 @@ function Planet() {
             lat={loc.lat}
             lon={loc.lon}
             label={loc.label}
+            planetRef={planetRef}
           />
         ))}
       </mesh>
