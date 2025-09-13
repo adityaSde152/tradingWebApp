@@ -23,11 +23,6 @@ const App = () => {
         {/* Dashboard Routes */}
         <Route path="/dashboard" element={<DashboardMainNavigation />}>
           <Route index element={<Dashboard />} />
-<<<<<<< HEAD
-          <Route path="markets" element={<Market/>} />
-=======
-          <Route path="profile" element={<Dashboard />} />
->>>>>>> f7db05aac56291d0bcea907cb3b6c7d6890ae1d1
           <Route path="*" element={<PageNotFound />} />
         </Route>
         <Route path="*" element={<PageNotFound />} />
