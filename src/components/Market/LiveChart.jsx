@@ -1,11 +1,56 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createChart } from "lightweight-charts";
 
-const LiveChart = ({ symbol }) => {
+const LiveChart = ({ symbol, interval }) => {
   const chartContainerRef = useRef(null);
   const chartRef = useRef(null);
   const countdownRef = useRef(null);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // 🔹 Convert interval string (like "1m", "5m", "1h") into milliseconds
+const intervalToMs = (interval) => {
+  const unit = interval.slice(-1); // last char (m/h/d/w)
+  const value = parseInt(interval.slice(0, -1)); // number part
+
+  switch (unit) {
+    case "m": return value * 60 * 1000;
+    case "h": return value * 60 * 60 * 1000;
+    case "d": return value * 24 * 60 * 60 * 1000;
+    case "w": return value * 7 * 24 * 60 * 60 * 1000;
+    default: return 60 * 1000; // fallback 1m
+  }
+};
+
+  // handle fullscreen toggle
+  const handleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      chartContainerRef.current.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  };
+
+  // listen for fullscreen change
+  useEffect(() => {
+    const onFullScreenChange = () => {
+      const fsActive = !!document.fullscreenElement;
+      setIsFullscreen(fsActive);
+
+      // resize chart when entering/exiting fullscreen
+      if (chartRef.current && chartContainerRef.current) {
+        chartRef.current.applyOptions({
+          width: chartContainerRef.current.clientWidth,
+          height: chartContainerRef.current.clientHeight,
+        });
+        chartRef.current.timeScale().fitContent(); // ensure proper redraw
+      }
+    };
+
+    document.addEventListener("fullscreenchange", onFullScreenChange);
+    return () =>
+      document.removeEventListener("fullscreenchange", onFullScreenChange);
+  }, []);
 
   useEffect(() => {
     if (!chartContainerRef.current) return;
@@ -59,7 +104,6 @@ const LiveChart = ({ symbol }) => {
       priceFormat: { type: "price", precision: 2, minMove: 0.01 },
     });
 
-    // Round right price scale
     chart.priceScale("right").applyOptions({
       tickMarkFormatter: (price) => {
         const rounded = Math.round(price / 10) * 10;
@@ -67,7 +111,6 @@ const LiveChart = ({ symbol }) => {
       },
     });
 
-    // Resize handling
     const handleResize = () => {
       chart.applyOptions({
         width: chartContainerRef.current.clientWidth,
@@ -76,8 +119,9 @@ const LiveChart = ({ symbol }) => {
     };
     window.addEventListener("resize", handleResize);
 
-    // Fetch historical candles
-    fetch(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=1m&limit=100`)
+    fetch(
+      `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=100`
+    )
       .then((res) => res.json())
       .then((data) => {
         const formatted = data.map((item) => ({
@@ -89,56 +133,84 @@ const LiveChart = ({ symbol }) => {
         }));
         candleSeries.setData(formatted);
 
-        // Zoom to last 50 candles
         chart.timeScale().setVisibleLogicalRange({
           from: formatted.length - 50,
           to: formatted.length,
         });
       });
 
-    // WebSocket live updates
-    const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}@kline_1m`);
+    const ws = new WebSocket(
+      `wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}@kline_${interval}`
+    );
     ws.onmessage = (event) => {
       const { k: candlestick } = JSON.parse(event.data);
       const time = Math.floor(candlestick.t / 1000);
+      const newClose = parseFloat(candlestick.c);
 
-      candleSeries.update({
-        time,
-        open: parseFloat(candlestick.o),
-        high: parseFloat(candlestick.h),
-        low: parseFloat(candlestick.l),
-        close: parseFloat(candlestick.c),
-      });
+      const duration = 500;
+      const start = performance.now();
+      const oldClose = candleSeries._lastClose || newClose;
 
-      chart.timeScale().applyOptions({
-        rightOffset: 20,
-        rightBarStaysOnScroll: true,
-      });
+      const animate = (now) => {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased =
+          progress < 1 / 2.75
+            ? 7.5625 * progress * progress
+            : progress < 2 / 2.75
+            ? 7.5625 * (progress - 1.5 / 2.75) ** 2 + 0.75
+            : progress < 2.5 / 2.75
+            ? 7.5625 * (progress - 2.25 / 2.75) ** 2 + 0.9375
+            : 7.5625 * (progress - 2.625 / 2.75) ** 2 + 0.984375;
 
-      // Candle countdown
-      const intervalMs = 60 * 1000; // 1m candle
-      const nextClose = candlestick.t + intervalMs;
+        const interpolated = oldClose + (newClose - oldClose) * eased;
+
+        candleSeries.update({
+          time,
+          open: parseFloat(candlestick.o),
+          high: parseFloat(candlestick.h),
+          low: parseFloat(candlestick.l),
+          close: interpolated,
+        });
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          candleSeries._lastClose = newClose;
+        }
+      };
+
+      requestAnimationFrame(animate);
+
+      // const intervalMs = intervalToMs(interval);
+      // const nextClose = candlestick.t + intervalMs;
+      const nextClose = candlestick.T;
 
       if (countdownRef.current) clearInterval(countdownRef.current);
 
       countdownRef.current = setInterval(() => {
-        const remaining = Math.max(0, Math.floor((nextClose - Date.now()) / 1000));
+        const remaining = Math.max(
+          0,
+          Math.floor((nextClose - Date.now()) / 1000)
+        );
         const minutes = String(Math.floor(remaining / 60)).padStart(2, "0");
         const seconds = String(remaining % 60).padStart(2, "0");
         const label = `${minutes}:${seconds}`;
 
         candleSeries.setMarkers([
           {
-            time,
+            time:Math.floor(candlestick.t / 1000),
             position: "belowBar",
             color: "white",
             text: label,
           },
         ]);
+        if (remaining <= 0) {
+    clearInterval(countdownRef.current); // stop when candle closed
+  }
+
       }, 1000);
     };
 
-    // Live clock
     const clockTimer = setInterval(() => setCurrentTime(new Date()), 1000);
 
     return () => {
@@ -148,14 +220,21 @@ const LiveChart = ({ symbol }) => {
       if (countdownRef.current) clearInterval(countdownRef.current);
       clearInterval(clockTimer);
     };
-  }, [symbol]);
+  }, [symbol, interval]);
 
   return (
-    <div className="h-full w-full relative">
-      <div ref={chartContainerRef} className="h-full w-full">
-        <div className="absolute top-2 right-2 bg-black bg-opacity-50 px-3 py-1 rounded text-sm">
-          {currentTime.toLocaleTimeString()}
-        </div>
+    <div className="relative h-full w-full" ref={chartContainerRef}>
+      {/* fullscreen toggle button */}
+      <button
+        onClick={handleFullScreen}
+        className="absolute top-2 left-2 z-10 bg-black bg-opacity-50 px-3 py-1 rounded text-sm text-white hover:bg-opacity-80"
+      >
+        {isFullscreen ? "⛶ Exit" : "⛶ Fullscreen"}
+      </button>
+
+      {/* clock overlay */}
+      <div className="absolute top-2 right-2 bg-black bg-opacity-50 px-3 py-1 rounded text-sm text-white z-10">
+        {currentTime.toLocaleTimeString()}
       </div>
     </div>
   );
