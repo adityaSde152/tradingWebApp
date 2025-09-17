@@ -1,43 +1,42 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useContext } from "react";
 import axios from "axios";
+import { refreshAccessToken } from "../services/authServices";
+import { getUser } from "../services/userServices";
 
 export const AuthContext = createContext();
+export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  const [accessToken, setAccessToken] = useState(null);
-
-  // Login/Register
-  const saveAccessToken = (token) => {
-    setAccessToken(token);
-  };
+  const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState(null);
 
   // Refresh Access Token every 2 min
-  const refreshAccessToken = async () => {
+  const refreshToken = async () => {
     try {
-      const res = await axios.post(
-        "http://localhost:4000/api/auth/refresh",
-        {},
-        { withCredentials: true } // refresh token
-      );
-
-      if (res.data.success) {
-        setAccessToken(res.data.accessToken);
-      }
+      const res = await refreshAccessToken();
     } catch (err) {
       console.error("Refresh token error:", err.response?.data || err.message);
     }
   };
 
-  useEffect(() => {
-    if (!accessToken) return; // If not token do not refresh
-    const interval = setInterval(refreshAccessToken, 2 * 60 * 1000);
-    console.log(accessToken);
-    return () => clearInterval(interval);
-  }, [accessToken]);
+  const fetchUser = async () => {
+    const user = await getUser();
+    setUser(user.userData);
+  };
 
-  return (
-    <AuthContext.Provider value={{ accessToken, saveAccessToken }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  useEffect(() => {
+    refreshToken();
+    fetchUser();
+
+    const interval = setInterval(refreshToken, 2 * 58 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const value = {
+    user,
+    setUser,
+    isLoading,
+    setIsLoading,
+  };
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

@@ -1,26 +1,12 @@
 import StatsCard from "../components/Dashboard/StatsCard";
 import CardDetails from "../components/Dashboard/CardDetails";
 import UserProfile from "../components/Dashboard/UserProfile";
-
 import TransactionDetails from "../components/Dashboard/TransactionDetails";
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 const Dashboard = () => {
-  const [user, setUser] = useState({
-    id: "USR001",
-    fullName: "Rahul Sharma",
-    username: "rahul_sharma95",
-    email: "rahul.sharma@example.com",
-    phone: "+91 9876543210",
-    dob: "1995-05-20",
-    gender: "Male",
-    country: "India",
-    currency: "INR",
-    password: "hashed_password_123",
-    referralCode: "REF-RAHUL95",
-    createdAt: "2025-09-01",
-    status: "Active",
-  });
+  const { user, setUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
 
   return (
