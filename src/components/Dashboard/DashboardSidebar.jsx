@@ -27,7 +27,11 @@ const sidebarItems = [
 
 const DashboardSidebar = () => {
   return (
-    <aside className="w-20 group hover:w-50 h-screen bg-gray-800 border-r shadow-2xl border-gray-200 text-white flex flex-col p-4 duration-300">
+    <aside className="
+    w-20 group hover:w-52
+    h-screen bg-gray-800 border-r border-gray-700
+    text-white shadow-2xl flex flex-col p-4 duration-300
+  ">
       {/* Logo + Title */}
       <div className="flex items-center gap-2 mb-8">
         {/* ✅ Logo always fixed */}

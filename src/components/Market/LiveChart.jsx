@@ -15,8 +15,10 @@ const LiveChart = ({ symbol, interval }) => {
   const handleFullScreen = () => {
     if (!document.fullscreenElement) {
       chartContainerRef.current.requestFullscreen();
+      setIsFullscreen(true);
     } else {
       document.exitFullscreen();
+      setIsFullscreen(false);
     }
   };
 
@@ -24,7 +26,7 @@ const LiveChart = ({ symbol, interval }) => {
     if (price >= 10) return 2;
     if (price >= 1) return 4;
     if (price >= 0.01) return 5;
-    return 6; // for very small coins
+    return 6;
   };
 
   useEffect(() => {
@@ -45,7 +47,13 @@ const LiveChart = ({ symbol, interval }) => {
         entireTextOnly: true,
         minimumLabelSpacing: 100,
       },
-      timeScale: { borderVisible: true, timeVisible: true, secondsVisible: true, barSpacing: 25, rightOffset: 20 },
+      timeScale: {
+        borderVisible: true,
+        timeVisible: true,
+        secondsVisible: true,
+        barSpacing: 25, // default zoom level
+        rightOffset: 20,
+      },
       handleScroll: { mouseWheel: true, horzTouchDrag: true },
       handleScale: { axisPressedMouseMove: true, pinch: true, mouseWheel: true },
     });
@@ -60,7 +68,7 @@ const LiveChart = ({ symbol, interval }) => {
       wickUpColor: "#00c853",
       wickDownColor: "#d50000",
       priceLineVisible: true,
-      priceFormat: { type: "price", precision: 2, minMove: 0.01 }, // temp, will update after fetch
+      priceFormat: { type: "price", precision: 2, minMove: 0.01 },
     });
 
     candleSeriesRef.current = candleSeries;
@@ -72,6 +80,21 @@ const LiveChart = ({ symbol, interval }) => {
       });
     };
     window.addEventListener("resize", handleResize);
+
+    // ✅ Zoom control (min/max clamp)
+    const timeScale = chart.timeScale();
+    const MIN_SPACING = 10;   // max zoom out (thin candles)
+    const MAX_SPACING = 50;  // max zoom in (thick candles)
+
+    timeScale.subscribeVisibleTimeRangeChange(() => {
+      const options = timeScale.options();
+      let spacing = options.barSpacing || 25;
+
+      if (spacing < MIN_SPACING) spacing = MIN_SPACING;
+      if (spacing > MAX_SPACING) spacing = MAX_SPACING;
+
+      timeScale.applyOptions({ barSpacing: spacing });
+    });
 
     // Fetch historical candles
     fetch(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=100`)
@@ -85,7 +108,6 @@ const LiveChart = ({ symbol, interval }) => {
           close: parseFloat(item[4]),
         }));
 
-        // Update price precision dynamically based on last close
         const latestClose = formatted[formatted.length - 1].close;
         const precision = getPricePrecision(latestClose);
         candleSeries.applyOptions({
@@ -169,9 +191,7 @@ const LiveChart = ({ symbol, interval }) => {
         text: `${t.direction} ${t.remaining}s`,
       }));
 
-    const countdownMarker = candleSeriesRef.current
-      .markers()
-      ?.find((m) => m.id === "countdown");
+    const countdownMarker = candleSeriesRef.current.markers()?.find((m) => m.id === "countdown");
 
     if (countdownMarker) activeTrades.push(countdownMarker);
 
