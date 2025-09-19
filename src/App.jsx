@@ -9,6 +9,7 @@ import DashboardMainNavigation from "./components/Dashboard/DashboardMainNavigat
 import Login from "./pages/Login";
 import { Toaster } from "react-hot-toast";
 import Market from "./pages/Market";
+import Trade from "./pages/Trade";
 
 const App = () => {
   return (
@@ -24,9 +25,11 @@ const App = () => {
       />
       <ChatBot />
       <Routes>
+        <Route path="/demo-account" element={<Market/>}/>
         <Route path="/" element={<MainNavigation />}>
           <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
+          
           <Route path="*" element={<PageNotFound />} />
         </Route>
 
@@ -35,6 +38,7 @@ const App = () => {
           <Route index element={<Dashboard />} />
           <Route path="profile" element={<Dashboard />} />
           <Route path="markets" element={<Market />} />
+          <Route path="trade" element={<Trade />} />
           <Route path="*" element={<PageNotFound />} />
         </Route>
         <Route path="*" element={<PageNotFound />} />

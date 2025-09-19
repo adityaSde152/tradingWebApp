@@ -1,26 +1,32 @@
 import React, { useState } from "react";
 
 const INTERVALS = [
-  "1m", "3m", "5m", "15m", "30m",
+  "1s","1m", "3m", "5m", "15m", "30m",
   "1h", "2h", "4h", "6h", "8h", "12h",
   "1d", "3d", "1w", "1M"
 ];
-
 
 const IntervalSelector = ({ interval, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="absolute top-12 left-2 z-20">
+    <div className="absolute bottom-6 left-3 z-20">
+      {/* Small square button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="bg-black bg-opacity-50 px-3 py-1 rounded text-sm text-white hover:bg-opacity-80"
+        className="w-10 h-10 bg-black bg-opacity-50 rounded-md flex items-center justify-center text-white text-sm hover:bg-opacity-80 relative group"
       >
-        Interval: {interval}
+        {interval}
+
+        {/* Tooltip on hover */}
+        <span className="absolute -top-8 left-1/2 -translate-x-1/2 text-xs bg-gray-800 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+          Intervals
+        </span>
       </button>
 
+      {/* Dropdown list */}
       {isOpen && (
-        <div className="mt-2 bg-gray-800 rounded shadow-lg">
+        <div className="mt-2 bg-gray-800 rounded shadow-lg max-h-60 overflow-y-auto">
           {INTERVALS.map((int) => (
             <button
               key={int}

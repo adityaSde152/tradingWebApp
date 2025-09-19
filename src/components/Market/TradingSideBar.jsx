@@ -1,11 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { ChevronDown, Plus, Minus, ShoppingCart, RefreshCw } from "lucide-react";
+import {
+  ChevronDown,
+  Plus,
+  Minus,
+  ShoppingCart,
+  RefreshCw,
+} from "lucide-react";
+import { useTrade } from "../../context/TradeContext";
+import { useNavigate } from "react-router-dom";
 
 const SYMBOL_META = {
   BTCUSDT: { name: "Bitcoin", icon: "₿", color: "bg-orange-500" },
   ETHUSDT: { name: "Ethereum", icon: "Ξ", color: "bg-indigo-500" },
   BNBUSDT: { name: "BNB", icon: "Ⓑ", color: "bg-yellow-400 text-black" },
+  ADAUSDT: { name: "Cardano", icon: "A", color: "bg-blue-500" },
+  XRPUSDT: { name: "Ripple", icon: "✕", color: "bg-sky-400" },
   SOLUSDT: { name: "Solana", icon: "◎", color: "bg-purple-500" },
+  DOGEUSDT: { name: "Dogecoin", icon: "Ð", color: "bg-yellow-300 text-black" },
+  DOTUSDT: { name: "Polkadot", icon: "●", color: "bg-pink-500" },
+  MATICUSDT: { name: "Polygon", icon: "⬠", color: "bg-indigo-400" },
+  LTCUSDT: { name: "Litecoin", icon: "Ł", color: "bg-gray-400 text-black" },
 };
 
 const TradingSidebar = ({ symbol, onSwitch }) => {
@@ -13,9 +27,16 @@ const TradingSidebar = ({ symbol, onSwitch }) => {
   const [timeSeconds, setTimeSeconds] = useState(0);
   const [investment, setInvestment] = useState(10000);
   const [price, setPrice] = useState(null);
-  const [trades, setTrades] = useState([]);
 
-  // Format timer
+  const { trades, startTrade } = useTrade();
+  const [tick, setTick] = useState(0);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const interval = setInterval(() => setTick((prev) => prev + 1), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   const formatTime = () => {
     const hours = Math.floor(timeMinutes / 60);
     const mins = timeMinutes % 60;
@@ -25,24 +46,21 @@ const TradingSidebar = ({ symbol, onSwitch }) => {
   };
 
   const increaseTime = () => {
-    if (timeSeconds < 59) {
-      setTimeSeconds(timeSeconds + 1);
-    } else {
+    if (timeSeconds < 59) setTimeSeconds(timeSeconds + 1);
+    else {
       setTimeSeconds(0);
       setTimeMinutes(timeMinutes + 1);
     }
   };
 
   const decreaseTime = () => {
-    if (timeSeconds > 0) {
-      setTimeSeconds(timeSeconds - 1);
-    } else if (timeMinutes > 0) {
+    if (timeSeconds > 0) setTimeSeconds(timeSeconds - 1);
+    else if (timeMinutes > 0) {
       setTimeSeconds(59);
       setTimeMinutes(timeMinutes - 1);
     }
   };
 
-  // Fetch live price
   useEffect(() => {
     if (!symbol) return;
 
@@ -53,6 +71,10 @@ const TradingSidebar = ({ symbol, onSwitch }) => {
         );
         const data = await res.json();
         setPrice(parseFloat(data.price).toFixed(2));
+        window.latestPrice = {
+          ...window.latestPrice,
+          [symbol]: parseFloat(data.price),
+        };
       } catch (err) {
         console.error("Error fetching price:", err);
       }
@@ -69,18 +91,14 @@ const TradingSidebar = ({ symbol, onSwitch }) => {
     color: "bg-gray-500",
   };
 
-  // Handle trade actions
   const handleTrade = (direction) => {
-    const newTrade = {
-      id: Date.now(),
+    startTrade({
       symbol,
-      investment,
       direction,
-      payout: (investment * 1.65).toFixed(2),
-      time: formatTime(),
+      investment,
+      duration: timeMinutes * 60 + timeSeconds,
       price,
-    };
-    setTrades([newTrade, ...trades]);
+    });
   };
 
   return (
@@ -185,9 +203,17 @@ const TradingSidebar = ({ symbol, onSwitch }) => {
       <div className="flex-1 overflow-y-auto px-4 py-4 mt-3 border-t border-slate-700">
         <div className="flex items-center justify-between mb-3">
           <span className="text-sm font-medium">Trade History</span>
-          <span className="bg-blue-600 text-xs px-2 py-1 rounded">
-            {trades.length}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="bg-blue-600 text-xs px-2 py-1 rounded">
+              {trades.length}
+            </span>
+            <button
+              onClick={() => navigate("/dashboard/")}
+              className="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded text-white text-xs font-medium transition shadow"
+            >
+              View All
+            </button>
+          </div>
         </div>
 
         {trades.length === 0 ? (
@@ -197,31 +223,48 @@ const TradingSidebar = ({ symbol, onSwitch }) => {
           </div>
         ) : (
           <div className="space-y-3">
-            {trades.map((trade) => (
-              <div
-                key={trade.id}
-                className="bg-slate-800 p-3 rounded-lg flex justify-between items-center shadow"
-              >
-                <div>
-                  <div className="font-medium">{trade.symbol}</div>
-                  <div className="text-xs text-slate-400">
-                    {trade.time} — {trade.direction}
+            {trades.map((trade) => {
+              const latestPrice = window.latestCandleClose || trade.price;
+              const candleColor = window.latestCandleColor || "green";
+
+              return (
+                <div
+                  key={trade.id}
+                  className="bg-slate-800 p-3 rounded-lg flex justify-between items-center shadow"
+                >
+                  <div>
+                    <div className="font-medium">{trade.symbol}</div>
+                    <div className="text-xs text-slate-400">
+                      {trade.remaining > 0
+                        ? `${trade.remaining}s left`
+                        : `${trade.status}`}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div
+                      className={`font-bold ${
+                        trade.remaining > 0
+                          ? candleColor === "green"
+                            ? "text-green-400"
+                            : "text-red-400"
+                          : ""
+                      }`}
+                    >
+                      {trade.payout} ₹
+                    </div>
+                    <div
+                      className={`text-xs ${
+                        trade.direction === "UP"
+                          ? "text-green-400"
+                          : "text-red-400"
+                      }`}
+                    >
+                      {trade.direction}
+                    </div>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="font-bold">
-                    {trade.payout} ₹
-                  </div>
-                  <div
-                    className={`text-xs ${
-                      trade.direction === "UP" ? "text-green-400" : "text-red-400"
-                    }`}
-                  >
-                    {trade.direction}
-                  </div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
