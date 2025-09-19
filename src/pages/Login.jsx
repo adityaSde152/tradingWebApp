@@ -14,11 +14,11 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { loginUser, registerUser, verifyOtp } from "../services/authServices";
 
 const Login = () => {
-  const { saveAccessToken } = useContext(AuthContext);
+  const { user, setUser, isLoading, setIsLoading } = useContext(AuthContext);
   const [isLogin, setIsLogin] = useState(false);
-  const [user, setUser] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
@@ -42,66 +42,55 @@ const Login = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleOnSubmit = async (e) => {
+  // Register User
+  const handleRegister = async (e) => {
     e.preventDefault();
-    if (!isLogin) {
-      // Register User Api Call
-      try {
-        const response = await axios.post(
-          `http://localhost:4000/api/auth/register`,
-          formData,
-          { withCredentials: true }
-        );
-        console.log(response);
-        if (response.data.success) {
-          saveAccessToken(response.data.accessToken);
-          setIsOtpSent(true);
-          setUser(response.data.user);
-        }
-        toast.success(response.data.message);
-      } catch (error) {
-        console.log(error);
-        toast.error(error.response.data.message);
-      }
-    } else {
-      // Login User API Call
-      try {
-        const response = await axios.post(
-          `http://localhost:4000/api/auth/login`,
-          formData,
-          { withCredentials: true }
-        );
-        if (response.data.success) {
-          toast.success(response.data.message);
-          saveAccessToken(response.data.accessToken)
-          setUser(response.data.user);
-          navigate("/dashboard/profile");
-        }
-      } catch (error) {
-        console.log(error);
-        toast.error(error.response.data.message);
-      }
+    setIsLoading(true);
+    try {
+      const res = await registerUser(formData);
+      console.log(res);
+      setIsOtpSent(true);
+      setUser(res.user);
+      toast.success(res?.message);
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // console.log(user);
-  const handleVerifyOtp = async () => {
-    // Verify OTP API Call
+  // Login User
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
     try {
-      const response = await axios.post(
-        `http://localhost:4000/api/auth/verify-otp`,
-        { email: user.email, otp },
-        { withCredentials: true }
-      );
-      if (response.data.success) {
-        toast.success(response.data.message);
-        setIsLogin(true);
-        setFormData(initialFormData);
-        setIsOtpSent(false);
-      }
+      const res = await loginUser(formData);
+      toast.success(res?.message);
+      console.log(res);
+      setUser(res?.user);
+      navigate("/dashboard/profile");
     } catch (error) {
       console.log(error);
-      toast.error(error.response.data.message);
+      toast.error("Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Verify OTP Function
+  const handleVerifyOtp = async () => {
+    setIsLoading(true);
+    try {
+      const response = await verifyOtp({ email: user.email, otp });
+      toast.success(response?.message);
+      setIsOtpSent(false);
+      navigate("/dashboard/profile");
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -142,6 +131,7 @@ const Login = () => {
               onClick={() => {
                 setIsLogin(true);
                 setFormData(initialFormData);
+                setIsOtpSent(false);
               }}
               className={`px-6 py-2 ${
                 isLogin ? "bg-green-600" : "bg-gray-800"
@@ -153,7 +143,7 @@ const Login = () => {
 
           {/* Form  */}
           <form
-            onSubmit={handleOnSubmit}
+            onSubmit={isLogin ? handleLogin : handleRegister}
             className={`${!isLogin ? "space-y-3" : "space-y-8"}`}
           >
             {/* Country Input */}
@@ -176,6 +166,7 @@ const Login = () => {
                 }}
               />
             )}
+
             {/* Currency Input */}
             {!isLogin && (
               <Dropdown
@@ -189,6 +180,7 @@ const Login = () => {
                 }
               />
             )}
+
             {/* Fullname Input */}
             {!isLogin && (
               <div className="relative w-full">
@@ -213,6 +205,7 @@ const Login = () => {
                 </label>
               </div>
             )}
+
             {/* Email Input */}
             <div className="relative w-full">
               <input
@@ -235,6 +228,7 @@ const Login = () => {
                 Email
               </label>
             </div>
+
             {/* Password Input */}
             <div className="relative w-full">
               <input
@@ -271,6 +265,7 @@ const Login = () => {
                 Password
               </label>
             </div>
+
             {/* Referral Input */}
             {!isLogin && ( // Referral
               <div className="relative w-full">
@@ -294,6 +289,7 @@ const Login = () => {
                 </label>
               </div>
             )}
+
             {/* Checkbox */}
             {!isLogin && (
               <label className="flex items-start text-sm">
@@ -331,13 +327,18 @@ const Login = () => {
                 </label>
               </div>
             )}
+
             {/* Register/Login/Verify-OTP Button */}
             {!isOtpSent ? (
               <button
                 type="submit"
                 className="w-full bg-green-600 hover:bg-green-700 py-2 rounded-lg text-white font-semibold cursor-pointer"
               >
-                {isLogin ? "Login →" : "Register →"}
+                {isLoading
+                  ? "Processing..."
+                  : isLogin
+                  ? "Login →"
+                  : "Register →"}
               </button>
             ) : (
               <button
@@ -345,22 +346,22 @@ const Login = () => {
                 onClick={handleVerifyOtp}
                 className="w-full bg-green-600 hover:bg-green-700 py-2 rounded-lg text-white font-semibold cursor-pointer"
               >
-                {"Verify OTP →"}
+                {isLoading ? "Processing..." : "Verify OTP →"}
               </button>
             )}
           </form>
 
           {/* Divider */}
-          <div className="flex items-center mb-6 mt-2">
+          {/* <div className="flex items-center mb-6 mt-2">
             <div className="flex-grow border-t border-gray-700"></div>
             <span className="px-3 text-gray-400 text-sm">Sign in via</span>
             <div className="flex-grow border-t border-gray-700"></div>
-          </div>
+          </div> */}
 
           {/* Google Login */}
-          <button className="w-full flex items-center justify-center rounded-lg">
+          {/* <button className="w-full flex items-center justify-center rounded-lg">
             <FcGoogle className="text-4xl cursor-pointer" />
-          </button>
+          </button> */}
         </div>
       </div>
     </div>

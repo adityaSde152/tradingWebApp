@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  FaHome,
   FaChartLine,
   FaExchangeAlt,
   FaWallet,
@@ -10,18 +9,19 @@ import {
   FaSignOutAlt,
   FaUsers,
 } from "react-icons/fa";
-import { NavLink } from "react-router-dom";
+import { BiSupport } from "react-icons/bi";
+import { Link, NavLink } from "react-router-dom";
 import assets from "../../assets/assets";
 
 const sidebarItems = [
-  { name: "Profile", icon: <FaHome />, link: "profile" },
+  { name: "Profile", icon: <FaUser />, link: "profile" },
   { name: "Markets", icon: <FaChartLine />, link: "markets" },
   { name: "Trade", icon: <FaExchangeAlt />, link: "trade" },
   { name: "Portfolio", icon: <FaWallet />, link: "portfolio" },
   { name: "Transactions", icon: <FaHistory />, link: "transactions" },
   { name: "Referral Program", icon: <FaUsers />, link: "referral" },
   { name: "Settings", icon: <FaCog />, link: "settings" },
-  { name: "Support", icon: <FaUser />, link: "support" },
+  { name: "Support", icon: <BiSupport />, link: "support" },
   { name: "Logout", icon: <FaSignOutAlt />, link: "logout" },
 ];
 
@@ -31,13 +31,16 @@ const DashboardSidebar = () => {
       {/* Logo + Title */}
       <div className="flex items-center gap-2 mb-8">
         {/* ✅ Logo always fixed */}
-        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center flex-shrink-0">
+        <Link
+          to={"/"}
+          className="w-12 h-12 bg-white rounded-full flex items-center justify-center flex-shrink-0"
+        >
           <img
             className="w-10 h-10 object-contain rounded-full"
             src={assets.logo}
             alt="Logo"
           />
-        </div>
+        </Link>
         {/* ✅ Only the text fades on expand */}
         <h2 className="text-2xl font-bold text-green opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
           BinaryV

@@ -157,10 +157,64 @@ import * as THREE from "three";
 import { MapPin } from "lucide-react"; // ✅ Lucide icon
 import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader";
 
-function LocationPin({ lat, lon, label }) {
-  const pinRef = useRef();
+// function LocationPin({ lat, lon, label }) {
+//   const pinRef = useRef();
 
-  // Convert latitude and longitude to 3D coordinates
+//   // Convert latitude and longitude to 3D coordinates
+//   const radius = 1.03;
+//   const phi = (90 - lat) * (Math.PI / 180);
+//   const theta = (lon + 180) * (Math.PI / 180);
+
+//   const position = new THREE.Vector3(
+//     -(radius * Math.sin(phi) * Math.cos(theta)),
+//     radius * Math.cos(phi),
+//     radius * Math.sin(phi) * Math.sin(theta)
+//   );
+
+//   return (
+//     <group position={position} ref={pinRef}>
+//       {/* Lucide Location Pin rendered in 3D space as HTML overlay */}
+//       <Html center occlude>
+//         <div
+//           style={{
+//             display: "flex",
+//             flexDirection: "column",
+//             alignItems: "center",
+//             zIndex: 100,
+//           }}
+//         >
+//           <MapPin
+//             size={20}
+//             color="limegreen"
+//             style={{
+//               filter:
+//                 "drop-shadow(0 0 6px limegreen) drop-shadow(0 0 10px limegreen)",
+//             }}
+//           />
+//           <span
+//             style={{
+//               color: "white",
+//               fontSize: "10px",
+//               background: "rgba(0,0,0,0.4)",
+//               padding: "2px 4px",
+//               borderRadius: "4px",
+//               marginTop: "2px",
+//               whiteSpace: "nowrap",
+//             }}
+//           >
+//             {label}
+//           </span>
+//         </div>
+//       </Html>
+//     </group>
+//   );
+// }
+
+function LocationPin({ lat, lon, label, planetRef }) {
+  const { camera } = useThree();
+  const pinRef = useRef();
+  const [visible, setVisible] = React.useState(false); // start hidden
+
   const radius = 1.03;
   const phi = (90 - lat) * (Math.PI / 180);
   const theta = (lon + 180) * (Math.PI / 180);
@@ -171,44 +225,66 @@ function LocationPin({ lat, lon, label }) {
     radius * Math.sin(phi) * Math.sin(theta)
   );
 
+  // wait one tick so planet + camera have correct transforms
+  React.useEffect(() => {
+    const id = requestAnimationFrame(() => setVisible(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  useFrame(() => {
+    if (!pinRef.current || !planetRef.current) return;
+    if (!visible) return;
+
+    const worldPos = new THREE.Vector3();
+    pinRef.current.getWorldPosition(worldPos);
+
+    const camToPin = new THREE.Vector3().subVectors(worldPos, camera.position).normalize();
+    const camDir = camera.getWorldDirection(new THREE.Vector3());
+
+    const dot = camToPin.dot(camDir);
+
+    const planetPos = new THREE.Vector3();
+    planetRef.current.getWorldPosition(planetPos);
+
+    const distToPin = camera.position.distanceTo(worldPos);
+    const distToPlanet = camera.position.distanceTo(planetPos);
+
+    const shouldBeVisible = dot > 0 && distToPin < distToPlanet + 1.0;
+    setVisible(shouldBeVisible);
+  });
+
   return (
     <group position={position} ref={pinRef}>
-      {/* Lucide Location Pin rendered in 3D space as HTML overlay */}
-      <Html center occlude>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            zIndex: 100,
-          }}
-        >
-          <MapPin
-            size={20}
-            color="limegreen"
-            style={{
-              filter:
-                "drop-shadow(0 0 6px limegreen) drop-shadow(0 0 10px limegreen)",
-            }}
-          />
-          <span
-            style={{
-              color: "white",
-              fontSize: "10px",
-              background: "rgba(0,0,0,0.4)",
-              padding: "2px 4px",
-              borderRadius: "4px",
-              marginTop: "2px",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {label}
-          </span>
-        </div>
-      </Html>
+      {visible && (
+        <Html center>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <MapPin
+              size={20}
+              color="limegreen"
+              style={{
+                filter: "drop-shadow(0 0 6px limegreen) drop-shadow(0 0 10px limegreen)",
+              }}
+            />
+            <span
+              style={{
+                color: "white",
+                fontSize: "10px",
+                background: "rgba(0,0,0,0.4)",
+                padding: "2px 4px",
+                borderRadius: "4px",
+                marginTop: "2px",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {label}
+            </span>
+          </div>
+        </Html>
+      )}
     </group>
   );
 }
+
 
 function Planet() {
   const { gl } = useThree();
