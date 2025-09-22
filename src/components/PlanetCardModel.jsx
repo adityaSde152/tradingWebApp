@@ -11,6 +11,7 @@ import {
   SiRipple,
 } from "react-icons/si";
 import CandlestickLoader from "./Common/CandleStickLoader";
+import ErrorBoundary from "./ErrorBoundary";
 
 const EarthModel = () => {
   const { scene } = useGLTF("/models/Earth2-v1.glb");
@@ -101,13 +102,15 @@ const PlanetWithCoins = () => {
 
 export default function PlanetCardModel() {
   return (
-    <Canvas camera={{ position: [0, 0, 12], fov: 35 }}>
-      <ambientLight intensity={0.8} />
-      <directionalLight position={[5, 5, 5]} intensity={1.2} />
-      <Suspense fallback={<CandlestickLoader />}>
-        <PlanetWithCoins />
-      </Suspense>
-      <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.5} />
-    </Canvas>
+    <ErrorBoundary>
+      <Canvas camera={{ position: [0, 0, 12], fov: 35 }}>
+        <ambientLight intensity={0.8} />
+        <directionalLight position={[5, 5, 5]} intensity={1.2} />
+        <Suspense fallback={<CandlestickLoader />}>
+          <PlanetWithCoins />
+        </Suspense>
+        <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.5} />
+      </Canvas>
+    </ErrorBoundary>
   );
 }

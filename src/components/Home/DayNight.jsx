@@ -86,16 +86,16 @@ const DayNightVertical = () => {
 
         {/* Foreground content */}
         <div className="relative z-10 flex flex-col lg:flex-row  lg:justify-between items-center h-full px-4 sm:px-12">
-          <div className="max-w-lg">
+          <div className="max-w-lg pt-20 lg:pt-0">
             <h1
               ref={titleRef}
-              className="text-4xl md:text-6xl lg:text-8xl font-bold transition-colors duration-300 pt-26 font-gideon-roman"
+              className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold transition-colors duration-300 pt-20 lg:pt-10 font-gideon-roman"
             >
               Trade All {defaultDay}
             </h1>
             <p
               ref={textRef}
-              className="mt-4 text-xl md:text-lg transition-colors duration-300 font-gideon-roman"
+              className="mt-4 text-xl md:text-2xl transition-colors duration-300 font-gideon-roman"
             >
               Cryptocurrencies and our unique Synthetic Indices are available
               24/7.
@@ -105,11 +105,11 @@ const DayNightVertical = () => {
             </button>
           </div>
 
-          <div className=" pt-10 lg:pt-30">
+          <div className="pt-2">
             <img
               src={assets.day_night}
               alt="Man"
-              className="lg:object-contain object-bottom-right h-[90vh]"
+              className="object-bottom-right lg:object-contain   h-[72vh]  lg:h-[100vh]"
             />
           </div>
         </div>

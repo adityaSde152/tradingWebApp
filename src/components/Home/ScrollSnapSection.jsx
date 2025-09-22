@@ -43,110 +43,20 @@ export default function Scroll() {
   const textWrapperRef = useRef(null);
   const imageRef = useRef(null);
   const lastIndexRef = useRef(0);
+
   const [activeIndex, setActiveIndex] = useState(0);
-
-  // useEffect(() => {
-  //   const ctx = gsap.context(() => {
-  //     const totalHeight = tradingCards.length * window.innerHeight;
-
-  //     // Ensure image starts visible
-  //     if (imageRef.current) {
-  //       gsap.set(imageRef.current, { autoAlpha: 1, scale: 1, force3D: true });
-  //     }
-
-  //     // Scroll vertical for text
-  //     gsap.to(textWrapperRef.current, {
-  //       y: () => `-${window.innerHeight * (tradingCards.length - 1)}px`,
-  //       ease: "none",
-  //       scrollTrigger: {
-  //         trigger: containerRef.current,
-  //         start: "top top",
-  //         end: () => `+=${totalHeight}`,
-  //         scrub: true,
-  //         pin: true,
-  //         onUpdate: (self) => {
-  //           const index = Math.round(
-  //             Math.min(Math.max(self.progress, 0), 1) *
-  //               (tradingCards.length - 1)
-  //           );
-
-  //           if (index !== lastIndexRef.current) {
-  //             lastIndexRef.current = index;
-
-  //             if (imageRef.current) {
-  //               gsap.to(imageRef.current, {
-  //                 autoAlpha: 0,
-  //                 scale: 0.96,
-  //                 duration: 0.18,
-  //                 ease: "power1.in",
-  //                 overwrite: "auto",
-  //                 onComplete: () => {
-  //                   setActiveIndex(index);
-  //                   gsap.fromTo(
-  //                     imageRef.current,
-  //                     { autoAlpha: 0, scale: 0.96 },
-  //                     {
-  //                       autoAlpha: 1,
-  //                       scale: 1,
-  //                       duration: 0.45,
-  //                       ease: "power2.out",
-  //                       overwrite: "auto",
-  //                     }
-  //                   );
-  //                 },
-  //               });
-  //             } else {
-  //               setActiveIndex(index);
-  //             }
-  //           }
-  //         },
-  //       },
-  //     });
-
-  //     // ✅ Mobile: fade text color when behind image
-  //     ScrollTrigger.matchMedia({
-  //       "(max-width: 767px)": function () {
-  //         tradingCards.forEach((_, i) => {
-  //           const textEl = textWrapperRef.current.children[i];
-
-  //           gsap.to(textEl, {
-  //             opacity: 0, // hide when overlapped
-  //             ease: "none",
-  //             scrollTrigger: {
-  //               trigger: textEl,
-  //               start: () =>
-  //                 `top ${
-  //                   imageRef.current.offsetTop +
-  //                   imageRef.current.offsetHeight / 2
-  //                 }`,
-  //               end: () =>
-  //                 `bottom ${
-  //                   imageRef.current.offsetTop +
-  //                   imageRef.current.offsetHeight / 2
-  //                 }`,
-  //               scrub: true,
-  //             },
-  //           });
-  //         });
-  //       },
-  //     });
-  //   }, containerRef);
-
-  //   return () => ctx.revert();
-  // }, []);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const totalHeight = tradingCards.length * window.innerHeight;
+      const totalHeight =
+        textWrapperRef.current.scrollHeight - window.innerHeight;
 
       // Ensure image starts visible
-      if (imageRef.current) {
-        gsap.set(imageRef.current, { autoAlpha: 1, scale: 1, force3D: true });
-      }
+      gsap.set(imageRef.current, { autoAlpha: 1, scale: 1, force3D: true });
 
       // Scroll vertical for text
       gsap.to(textWrapperRef.current, {
-        y: () => `-${window.innerHeight * (tradingCards.length - 1)}px`,
+        y: () => `-${totalHeight}px`,
         ease: "none",
         scrollTrigger: {
           trigger: containerRef.current,
@@ -164,6 +74,7 @@ export default function Scroll() {
               lastIndexRef.current = index;
 
               if (imageRef.current) {
+                // Fade old image out
                 gsap.to(imageRef.current, {
                   autoAlpha: 0,
                   scale: 0.96,
@@ -171,7 +82,10 @@ export default function Scroll() {
                   ease: "power1.in",
                   overwrite: "auto",
                   onComplete: () => {
+                    // After fade-out, update image source
                     setActiveIndex(index);
+
+                    // Then fade new image in
                     gsap.fromTo(
                       imageRef.current,
                       { autoAlpha: 0, scale: 0.96 },
@@ -189,31 +103,30 @@ export default function Scroll() {
                 setActiveIndex(index);
               }
             }
-
-            // ✅ Only apply overlap check on small screens
-            ScrollTrigger.matchMedia({
-              "(max-width: 767px)": function () {
-                tradingCards.forEach((_, i) => {
-                  const textEl = textWrapperRef.current.children[i];
-
-                  gsap.fromTo(
-                    textEl,
-                    { opacity: 1 },
-                    {
-                      opacity: 0,
-                      ease: "none",
-                      scrollTrigger: {
-                        trigger: textEl,
-                        start: "top 40%", // when text top hits mid viewport
-                        end: "center 50%", // when text center passes mid viewport
-                        scrub: true, // smooth fade tied to scroll
-                      },
-                    }
-                  );
-                });
-              },
-            });
           },
+        },
+      });
+
+      // Small screen text fade
+      ScrollTrigger.matchMedia({
+        "(max-width: 767px)": function () {
+          tradingCards.forEach((_, i) => {
+            const textEl = textWrapperRef.current.children[i];
+            gsap.fromTo(
+              textEl,
+              { opacity: 1 },
+              {
+                opacity: 0,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: textEl,
+                  start: "top 40%",
+                  end: "center 50%",
+                  scrub: true,
+                },
+              }
+            );
+          });
         },
       });
     }, containerRef);
@@ -243,7 +156,7 @@ export default function Scroll() {
           {tradingCards.map((card, idx) => (
             <div
               key={idx}
-              className="min-h-screen flex flex-col items-center justify-center px-8 pb-22 text-center"
+              className="min-h-screen flex flex-col items-center justify-center px-8 pb-20 text-center"
             >
               <h2 className="text-3xl md:text-5xl font-bold mb-4">
                 {card.title}

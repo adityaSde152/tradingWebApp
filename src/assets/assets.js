@@ -21,6 +21,8 @@ import Mobile_img6 from "../assets/Phone-img6.png";
 import Mobile_img8 from "../assets/Phone-img8.png";
 import logo from "../assets/logo.png";
 import Day from "../assets/Day.jpg";
+import card_2_bg from "../assets/card_2_bg.png";
+import card_3_bg from "../assets/card_3_bg.jpg";
 
 export default {
   hero_img,
@@ -46,4 +48,6 @@ export default {
   Mobile_img6,
   logo,
   Mobile_img8,
+  card_2_bg,
+  card_3_bg,
 };

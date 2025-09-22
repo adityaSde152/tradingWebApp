@@ -47,7 +47,7 @@ const Dropdown = ({ label, icon: Icon, options, value, onChange }) => {
         <label
           className="peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:-translate-y-1/2 absolute left-8 top-3.5 text-gray-400  transition-all
                           peer-placeholder-shown:top-3.5  peer-placeholder-shown:text-gray-500
-                          peer-focus:-top-3 bg-black peer-focus:text-green-500"
+                          peer-focus:-top-3 bg-[#090e14] peer-focus:text-green-500"
         >
           {label}
         </label>

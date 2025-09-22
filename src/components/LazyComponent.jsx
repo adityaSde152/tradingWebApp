@@ -5,7 +5,7 @@ import CandlestickLoader from "./Common/CandleStickLoader";
 const LazyComponent = ({ Component }) => {
   const { ref, inView } = useInView({
     triggerOnce: true,
-    rootMargin: "200px", // preload early
+    rootMargin: "100%", // preload early
   });
 
   return (

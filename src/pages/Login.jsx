@@ -109,7 +109,7 @@ const Login = () => {
 
       {/* Right Side - Form */}
       <div className="md:w-1/2 relative h-full w-full flex items-center justify-center px-6 py-4 bg-[#090e14] text-white">
-        <div className="max-w-md w-full">
+        <div className="max-w-md pt-12 w-full">
           <h2 className="text-2xl font-semibold text-center mb-4">
             Welcome to Our Platform
           </h2>
@@ -199,7 +199,7 @@ const Login = () => {
                   htmlFor="name"
                   className="peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:-translate-y-1/2 absolute left-8 top-2.5 text-gray-400  transition-all
                           peer-placeholder-shown:top-3.5  peer-placeholder-shown:text-gray-500
-                          peer-focus:-top-3 bg-black peer-focus:text-green-500"
+                          peer-focus:-top-3 bg-[#090e14] peer-focus:text-green-500"
                 >
                   Full Name
                 </label>
@@ -223,7 +223,7 @@ const Login = () => {
                 htmlFor="email"
                 className="peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:-translate-y-1/2 absolute left-8 top-2.5 text-gray-400  transition-all
                           peer-placeholder-shown:top-3.5  peer-placeholder-shown:text-gray-500
-                          peer-focus:-top-3 bg-black peer-focus:text-green-500"
+                          peer-focus:-top-3 bg-[#090e14] peer-focus:text-green-500"
               >
                 Email
               </label>
@@ -260,7 +260,7 @@ const Login = () => {
                 htmlFor="password"
                 className="peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:-translate-y-1/2 absolute left-8 top-2.5 text-gray-400  transition-all
                           peer-placeholder-shown:top-3.5  peer-placeholder-shown:text-gray-500
-                          peer-focus:-top-3 bg-black peer-focus:text-green-500"
+                          peer-focus:-top-3 bg-[#090e14] peer-focus:text-green-500"
               >
                 Password
               </label>
@@ -283,7 +283,7 @@ const Login = () => {
                   htmlFor="referral"
                   className="peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:-translate-y-1/2 absolute left-8 top-2.5 text-gray-400  transition-all
                           peer-placeholder-shown:top-3.5  peer-placeholder-shown:text-gray-500
-                          peer-focus:-top-3 bg-black peer-focus:text-green-500"
+                          peer-focus:-top-3 bg-[#090e14] peer-focus:text-green-500"
                 >
                   Referral (Optional)
                 </label>
@@ -298,7 +298,7 @@ const Login = () => {
                   required
                   className="mt-1 mr-2 cursor-pointer"
                 />
-                <span>
+                <span className="text-xs">
                   I confirm that I am 18 years old or older and accept{" "}
                   <span className="text-green-500">service agreement</span>
                 </span>
@@ -321,7 +321,7 @@ const Login = () => {
                   htmlFor="otp"
                   className="absolute left-8 top-2.5 text-gray-400 transition-all
                 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-gray-500
-                peer-focus:-top-3 bg-black peer-focus:text-green-500"
+                peer-focus:-top-3 bg-[#090e14] peer-focus:text-green-500"
                 >
                   Enter OTP
                 </label>

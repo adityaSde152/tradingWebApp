@@ -2,6 +2,7 @@ import React, { lazy, useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import PlanetSection from "./Planet";
 
+
 const HeroSection = () => {
   const headingRef = useRef(null);
 

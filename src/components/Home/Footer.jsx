@@ -6,10 +6,11 @@ const Footer = () => {
       style={{
         background:
           "linear-gradient(165deg, black 40%, #38D300 100%, #38D300 5%)",
+        // backgroundColor:"pink"
       }}
-      className="   w-full flex flex-col justify-end items-center h-full  text-gray-300 py-8 px-6"
+      className="relative w-full flex flex-col justify-end items-center h-full  text-gray-300 py-8 px-6"
     >
-      <div className="w-[80vw] h-full pt-30  sm:pt-80 mb-12 sm:mb-0 pl-2 sm:pl-6 md:pl-0  mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
+      <div className="w-[80vw] h-full pt-40 mb-12 sm:mb-0 pl-2 sm:pl-6 md:pl-0  mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
         {/* Useful Links */}
         <div>
           <h3 className="text-white  font-semibold mb-3">Useful Links</h3>
