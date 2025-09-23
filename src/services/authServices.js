@@ -15,6 +15,20 @@ export const loginUser = async (data) => {
   return res.data;
 };
 
+// User Logout function
+export const logoutUser = async () => {
+  try {
+    Cookies.set("accessToken", "");
+    Cookies.set("refreshToken", "");
+    return { success: true, message: "User Logout Successfully" };
+  } catch (error) {
+    return {
+      success: false,
+      message: error,
+    };
+  }
+};
+
 // Verify-OTP API
 export const verifyOtp = async (data) => {
   const res = await api.post("/api/auth/verify-otp", data);

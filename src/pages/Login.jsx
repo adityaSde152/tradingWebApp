@@ -48,13 +48,16 @@ const Login = () => {
     setIsLoading(true);
     try {
       const res = await registerUser(formData);
-      console.log(res);
       setIsOtpSent(true);
       setUser(res.user);
       toast.success(res?.message);
     } catch (error) {
       console.log(error);
-      toast.error("Something went wrong");
+      toast.error(
+        error?.response?.data?.message ||
+          error?.response?.data?.errors[0]?.msg ||
+          "Something went wrong"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -67,12 +70,15 @@ const Login = () => {
     try {
       const res = await loginUser(formData);
       toast.success(res?.message);
-      console.log(res);
       setUser(res?.user);
       navigate("/dashboard/profile");
     } catch (error) {
       console.log(error);
-      toast.error("Something went wrong");
+      toast.error(
+        error?.response?.data?.message ||
+          error?.response?.data?.errors[0]?.msg ||
+          "Something went wrong"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -88,7 +94,11 @@ const Login = () => {
       navigate("/dashboard/profile");
     } catch (error) {
       console.log(error);
-      toast.error("Something went wrong");
+      toast.error(
+        error?.response?.data?.message ||
+          error?.response?.data?.errors[0]?.msg ||
+          "Something went wrong"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -314,14 +324,13 @@ const Login = () => {
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
                   placeholder="Enter OTP"
-                  className="peer w-full px-4 pl-8 pt-4 pb-2 rounded-lg border border-gray-700 text-white 
-                 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="peer w-full px-4 pl-8 pt-4 pb-2 rounded-lg  border border-gray-700 text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
                 <label
                   htmlFor="otp"
-                  className="absolute left-8 top-2.5 text-gray-400 transition-all
-                peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-gray-500
-                peer-focus:-top-3 bg-[#090e14] peer-focus:text-green-500"
+                  className="peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:-translate-y-1/2 absolute left-8 top-2.5 text-gray-400  transition-all
+                          peer-placeholder-shown:top-3.5  peer-placeholder-shown:text-gray-500
+                          peer-focus:-top-3 bg-[#090e14] peer-focus:text-green-500"
                 >
                   Enter OTP
                 </label>

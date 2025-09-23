@@ -23,6 +23,16 @@ import logo from "../assets/logo.png";
 import Day from "../assets/Day.jpg";
 import card_2_bg from "../assets/card_2_bg.png";
 import card_3_bg from "../assets/card_3_bg.jpg";
+import blog1 from "../assets/blog/blog1.png";
+import blog2 from "../assets/blog/blog2.png";
+import blog3 from "../assets/blog/blog3.png";
+import blog4 from "../assets/blog/blog4.png";
+import blog5 from "../assets/blog/blog5.png";
+import blog6 from "../assets/blog/blog6.png";
+import blog7 from "../assets/blog/blog7.png";
+import blog8 from "../assets/blog/blog8.png";
+import blog9 from "../assets/blog/blog9.png";
+import blog10 from "../assets/blog/blog10.png";
 
 export default {
   hero_img,
@@ -50,4 +60,14 @@ export default {
   Mobile_img8,
   card_2_bg,
   card_3_bg,
+  blog1,
+  blog2,
+  blog3,
+  blog4,
+  blog5,
+  blog6,
+  blog7,
+  blog8,
+  blog9,
+  blog10,
 };

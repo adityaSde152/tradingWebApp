@@ -3,8 +3,10 @@ import { Menu, X } from "lucide-react";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import assets from "../../assets/assets";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Navbar() {
+  const { user } = useAuth();
   const navItems = (
     <>
       {" "}
@@ -99,17 +101,31 @@ export default function Navbar() {
               >
                 Demo Account
               </NavLink>
-              <NavLink
-                onClick={() => setIsOpen(false)}
-                to={"/login"}
-                className={({ isActive }) =>
-                  `${
-                    isActive && "text-green hover:text-white"
-                  } text-sm px-2 py-1 rounded-full hover:bg-green  hover:border-gray-600 duration-300`
-                }
-              >
-                Sign In
-              </NavLink>
+              {user ? (
+                <NavLink
+                  onClick={() => setIsOpen(false)}
+                  to={"/dashboard/profile"}
+                  className={({ isActive }) =>
+                    `${
+                      isActive && "text-green hover:text-white"
+                    } text-sm px-2 py-1 rounded-full hover:bg-green  hover:border-gray-600 duration-300`
+                  }
+                >
+                  Dashboard
+                </NavLink>
+              ) : (
+                <NavLink
+                  onClick={() => setIsOpen(false)}
+                  to={"/login"}
+                  className={({ isActive }) =>
+                    `${
+                      isActive && "text-green hover:text-white"
+                    } text-sm px-2 py-1 rounded-full hover:bg-green  hover:border-gray-600 duration-300`
+                  }
+                >
+                  Sign In
+                </NavLink>
+              )}
             </div>
 
             {/* Mobile menu button */}
@@ -141,7 +157,7 @@ export default function Navbar() {
               <Link
                 to={"/demo-account"}
                 onClick={() => setIsOpen(false)}
-                className="border block px-4 py-1 text-center rounded-full text-sm w-full mt-2  hover:bg-green duration-300"
+                className="mx-28 w-full px-4 py-1 text-center border border-green rounded-full text-sm mt-2  hover:bg-green duration-300"
               >
                 Demo Account
               </Link>
