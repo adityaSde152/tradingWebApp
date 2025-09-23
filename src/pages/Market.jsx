@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import LiveChart from "../components/Market/LiveChart";
-import TradingSidebar from "../components/Market/TradingSideBar";
+import TradingSideBar from "../components/Market/TradingSideBar";
 import SymbolSelector from "../components/Market/SymbolSelector";
 import IntervalSelector from "../components/Market/IntervalSelector";
+import DashboardSidebar from "../components/Dashboard/DashboardSidebar";
 
 const Market = () => {
   const [symbol, setSymbol] = useState("BTCUSDT");
@@ -23,29 +24,42 @@ const Market = () => {
   }, []);
 
   return (
-    <div key={refreshKey} className="flex h-screen bg-gray-900 text-white">
-      {/* Chart + Left Sidebar */}
-      <div className="flex flex-1">
-        {/* Chart area */}
-        <div className="flex-1 relative mr-64"> 
-          {/* 👈 margin-right = width of right sidebar */}
-          <LiveChart symbol={symbol} interval={interval} />
+    <div 
+      key={refreshKey} 
+      className="flex h-screen bg-gray-900 text-white overflow-hidden"
+    >
+      {/* Left: dashboard sidebar (uncomment if needed) */}
+      {/* <DashboardSidebar /> */}
+
+      {/* Center: chart area */}
+      <div className="flex-1 flex flex-col min-w-0 min-h-0">
+        {/* Chart container (fills remaining height) */}
+        <div 
+          className="flex-1 relative min-h-0 min-w-0"
+          style={{
+            // Ensure the chart container takes up available space
+            display: 'flex',
+            flexDirection: 'column'
+          }}
+        >
+          {/* Chart takes full available space */}
+          <div className="flex-1 relative min-h-0 min-w-0">
+            <LiveChart symbol={symbol} interval={interval} />
+          </div>
+          
+          {/* Overlayed controls */}
           <SymbolSelector onChange={setSymbol} />
           <IntervalSelector interval={interval} onChange={setInterval} />
         </div>
       </div>
 
-      {/* Right Sidebar fixed */}
-      <div
-        className="
-          bg-slate-950/80 backdrop-blur-xl text-white shadow-2xl
-          flex flex-col border-slate-800
-          fixed top-0 right-0 w-64 h-screen border-l z-20
-          lg:w-60
-        "
-      >
-        <TradingSidebar symbol={symbol} />
-      </div>
+      {/* Right: trading sidebar */}
+      <TradingSideBar 
+        symbol={symbol} 
+        onSwitch={() => {
+          // Optional: add symbol switch logic here
+        }} 
+      />
     </div>
   );
 };

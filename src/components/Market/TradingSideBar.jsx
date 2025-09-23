@@ -5,21 +5,28 @@ import {
   Minus,
   ShoppingCart,
   RefreshCw,
+  Timer,
+  DollarSign,
+  TrendingUp,
+  TrendingDown,
+  Clock,
+  Wallet,
+  Activity,
 } from "lucide-react";
 import { useTrade } from "../../context/TradeContext";
 import { useNavigate } from "react-router-dom";
 
 const SYMBOL_META = {
-  BTCUSDT: { name: "Bitcoin", icon: "₿", color: "bg-orange-500" },
-  ETHUSDT: { name: "Ethereum", icon: "Ξ", color: "bg-indigo-500" },
-  BNBUSDT: { name: "BNB", icon: "Ⓑ", color: "bg-yellow-400 text-black" },
-  ADAUSDT: { name: "Cardano", icon: "A", color: "bg-blue-500" },
-  XRPUSDT: { name: "Ripple", icon: "✕", color: "bg-sky-400" },
-  SOLUSDT: { name: "Solana", icon: "◎", color: "bg-purple-500" },
-  DOGEUSDT: { name: "Dogecoin", icon: "Ð", color: "bg-yellow-300 text-black" },
-  DOTUSDT: { name: "Polkadot", icon: "●", color: "bg-pink-500" },
-  MATICUSDT: { name: "Polygon", icon: "⬠", color: "bg-indigo-400" },
-  LTCUSDT: { name: "Litecoin", icon: "Ł", color: "bg-gray-400 text-black" },
+  BTCUSDT: { name: "Bitcoin", icon: "BTC", color: "from-orange-400 to-orange-600" },
+  ETHUSDT: { name: "Ethereum", icon: "ETH", color: "from-blue-400 to-blue-600" },
+  BNBUSDT: { name: "BNB", icon: "BNB", color: "from-yellow-400 to-yellow-600" },
+  ADAUSDT: { name: "Cardano", icon: "ADA", color: "from-blue-300 to-blue-500" },
+  XRPUSDT: { name: "Ripple", icon: "XRP", color: "from-indigo-400 to-indigo-600" },
+  SOLUSDT: { name: "Solana", icon: "SOL", color: "from-purple-400 to-purple-600" },
+  DOGEUSDT: { name: "Dogecoin", icon: "DOGE", color: "from-yellow-300 to-yellow-500" },
+  DOTUSDT: { name: "Polkadot", icon: "DOT", color: "from-pink-400 to-pink-600" },
+  MATICUSDT: { name: "Polygon", icon: "MATIC", color: "from-purple-300 to-purple-500" },
+  LTCUSDT: { name: "Litecoin", icon: "LTC", color: "from-gray-300 to-gray-500" },
 };
 
 const TradingSidebar = ({ symbol, onSwitch }) => {
@@ -87,8 +94,8 @@ const TradingSidebar = ({ symbol, onSwitch }) => {
 
   const meta = SYMBOL_META[symbol] || {
     name: symbol,
-    icon: "?",
-    color: "bg-gray-500",
+    icon: symbol?.slice(0, 3) || "?",
+    color: "from-gray-400 to-gray-600",
   };
 
   const handleTrade = (direction) => {
@@ -102,186 +109,219 @@ const TradingSidebar = ({ symbol, onSwitch }) => {
   };
 
   return (
-   <div
-  className="
-    bg-slate-950/80 backdrop-blur-xl text-white shadow-2xl
-    flex flex-col border-slate-800
-    w-full h-[60vh] fixed bottom-0 left-0 right-0 border-t z-20
-    md:fixed md:top-0 md:right-0 md:w-64 md:h-screen md:border-l md:border-t-0
-    lg:w-60
-  "
->
-
-
-      {/* Header */}
-      <div className="flex p-4 gap-3">
-        <button className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 px-3 py-2 rounded-xl text-sm font-semibold shadow-lg transition">
-          + Deposit
-        </button>
-        <button className="flex-1 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 px-3 py-2 rounded-xl text-sm font-semibold shadow-lg transition">
-          Withdraw
-        </button>
-      </div>
-
-      {/* Symbol Info */}
-      <div className="px-4 py-3 border-b border-slate-800 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div
-            className={`w-10 h-10 ${meta.color} rounded-full flex items-center justify-center shadow-md`}
-          >
-            <span className="text-base font-bold">{meta.icon}</span>
-          </div>
-          <span className="font-medium tracking-wide">{meta.name} (OTC)</span>
+    <div className="
+      bg-gradient-to-b from-slate-900 to-slate-950 
+      border-l border-slate-700/50 backdrop-blur-sm
+      text-white shadow-xl flex flex-col
+      
+      /* Mobile: Fixed bottom with rounded corners */
+      w-full h-[65vh] fixed bottom-0 left-0 right-0 z-20
+      rounded-t-2xl border-t border-slate-600
+      
+      /* Desktop: Compact side panel */
+      md:static md:w-64 md:h-full md:rounded-none md:border-t-0
+      
+      /* Large screens */
+      lg:w-60 xl:w-64
+    ">
+      {/* Header with Quick Actions */}
+      <div className="p-4 border-b border-slate-700/30">
+        <div className="flex gap-2 mb-3">
+          <button className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 py-2 px-3 rounded-lg text-xs font-bold transition-all duration-200 shadow-md hover:shadow-lg">
+            <DollarSign className="w-3 h-3 inline mr-1" />
+            Fund
+          </button>
+          <button className="flex-1 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 py-2 px-3 rounded-lg text-xs font-bold transition-all duration-200 shadow-md hover:shadow-lg">
+            <Wallet className="w-3 h-3 inline mr-1" />
+            Withdraw
+          </button>
         </div>
-        <button
-          onClick={onSwitch}
-          className="text-slate-400 hover:text-white transition-colors"
-        >
-          <RefreshCw size={18} />
-        </button>
-      </div>
-
-      {/* Live Price */}
-      <div className="px-4 py-4 text-right">
-        <div className="text-xs uppercase tracking-wide text-slate-400">
-          Live Price
-        </div>
-        <div className="text-3xl font-extrabold font-mono text-emerald-400 drop-shadow">
-          {price ? price : "—"}
-        </div>
-      </div>
-
-      {/* Time Selector */}
-<div className="px-4 py-3 border-t border-slate-800">
-  <span className="text-gray-400 text-xs uppercase">Time</span>
-  <div className="flex items-center justify-center gap-2 mt-2">
-    <button
-      onClick={decreaseTime}
-      className="w-8 h-8 bg-slate-800/80 hover:bg-slate-700 rounded-full flex items-center justify-center shadow transition"
-    >
-      <Minus size={12} />
-    </button>
-    <div className="bg-slate-900/60 border border-slate-700 px-3 py-1 rounded-lg font-mono text-sm shadow-inner min-w-[70px] text-center">
-      {formatTime()}
-    </div>
-    <button
-      onClick={increaseTime}
-      className="w-8 h-8 bg-slate-800/80 hover:bg-slate-700 rounded-full flex items-center justify-center shadow transition"
-    >
-      <Plus size={12} />
-    </button>
-  </div>
-</div>
-
-{/* Investment Selector */}
-<div className="px-4 py-3 border-t border-slate-800">
-  <span className="text-gray-400 text-xs uppercase">Investment</span>
-  <div className="flex items-center justify-center gap-2 mt-2">
-    <button
-      onClick={() => setInvestment(Math.max(1000, investment - 1000))}
-      className="w-8 h-8 bg-slate-800/80 hover:bg-slate-700 rounded-full flex items-center justify-center shadow transition"
-    >
-      <Minus size={12} />
-    </button>
-    <div className="bg-slate-900/60 border border-slate-700 px-3 py-1 rounded-lg font-mono text-sm shadow-inner min-w-[80px] text-center">
-      {investment.toLocaleString()} ₹
-    </div>
-    <button
-      onClick={() => setInvestment(investment + 1000)}
-      className="w-8 h-8 bg-slate-800/80 hover:bg-slate-700 rounded-full flex items-center justify-center shadow transition"
-    >
-      <Plus size={12} />
-    </button>
-  </div>
-</div>
-
-
-      {/* Trade Buttons */}
-      <div className="px-4 mt-4 space-y-3">
-        <button
-          onClick={() => handleTrade("UP")}
-          className="w-full py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-xl text-white font-semibold transition shadow-lg"
-        >
-          Buy Up ({(investment * 1.65).toLocaleString()} ₹)
-        </button>
-        <button
-          onClick={() => handleTrade("DOWN")}
-          className="w-full py-3 bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 rounded-xl text-white font-semibold transition shadow-lg"
-        >
-          Buy Down ({(investment * 1.65).toLocaleString()} ₹)
-        </button>
-      </div>
-
-      {/* Trades History */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 mt-4 border-t border-slate-800">
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-sm font-semibold tracking-wide">
-            Trade History
-          </span>
-          <div className="flex items-center gap-2">
-            <span className="bg-blue-600 text-xs px-2 py-1 rounded-full shadow">
-              {trades.length}
-            </span>
+        
+        {/* Asset Info Card */}
+        <div className="bg-slate-800/50 rounded-xl p-3 border border-slate-600/30">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <div className={`w-8 h-8 bg-gradient-to-br ${meta.color} rounded-lg flex items-center justify-center text-white text-xs font-bold shadow-sm`}>
+                {meta.icon}
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold">{meta.name}</h3>
+                <p className="text-xs text-slate-400">Spot Trading</p>
+              </div>
+            </div>
             <button
-              onClick={() => navigate("/dashboard/")}
-              className="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded-lg text-white text-xs font-semibold transition shadow"
+              onClick={onSwitch}
+              className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
             >
-              View All
+              <RefreshCw size={14} className="text-slate-400" />
+            </button>
+          </div>
+          
+          {/* Live Price Display */}
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-1 mb-1">
+              <Activity className="w-3 h-3 text-emerald-400" />
+              <span className="text-xs text-slate-400 uppercase tracking-wide">Live Price</span>
+            </div>
+            <div className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+              ${price || "---"}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Trading Controls */}
+      <div className="px-4 py-3 space-y-4 flex-shrink-0">
+        {/* Time Control */}
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <Timer className="w-4 h-4 text-blue-400" />
+            <span className="text-xs font-semibold text-slate-300 uppercase tracking-wide">Duration</span>
+          </div>
+          <div className="flex items-center justify-between bg-slate-800/60 rounded-lg p-2 border border-slate-600/30">
+            <button
+              onClick={decreaseTime}
+              className="w-8 h-8 bg-slate-700 hover:bg-slate-600 rounded-md flex items-center justify-center transition-colors"
+            >
+              <Minus size={14} className="text-slate-300" />
+            </button>
+            <div className="bg-slate-900/70 px-4 py-2 rounded-md border border-slate-600/50">
+              <div className="text-sm font-mono text-center text-white">{formatTime()}</div>
+            </div>
+            <button
+              onClick={increaseTime}
+              className="w-8 h-8 bg-slate-700 hover:bg-slate-600 rounded-md flex items-center justify-center transition-colors"
+            >
+              <Plus size={14} className="text-slate-300" />
             </button>
           </div>
         </div>
 
-        {trades.length === 0 ? (
-          <div className="text-center text-slate-400 py-10">
-            <ShoppingCart size={28} className="mx-auto mb-2 opacity-60" />
-            <div className="text-sm">No trades yet. Start trading above.</div>
+        {/* Investment Control */}
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <DollarSign className="w-4 h-4 text-green-400" />
+            <span className="text-xs font-semibold text-slate-300 uppercase tracking-wide">Amount</span>
           </div>
-        ) : (
-          <div className="space-y-3">
-            {trades.map((trade) => {
-              const latestPrice = window.latestCandleClose || trade.price;
-              const candleColor = window.latestCandleColor || "green";
+          <div className="flex items-center justify-between bg-slate-800/60 rounded-lg p-2 border border-slate-600/30">
+            <button
+              onClick={() => setInvestment(Math.max(1000, investment - 1000))}
+              className="w-8 h-8 bg-slate-700 hover:bg-slate-600 rounded-md flex items-center justify-center transition-colors"
+            >
+              <Minus size={14} className="text-slate-300" />
+            </button>
+            <div className="bg-slate-900/70 px-4 py-2 rounded-md border border-slate-600/50">
+              <div className="text-sm font-mono text-center text-white">₹{investment.toLocaleString()}</div>
+            </div>
+            <button
+              onClick={() => setInvestment(investment + 1000)}
+              className="w-8 h-8 bg-slate-700 hover:bg-slate-600 rounded-md flex items-center justify-center transition-colors"
+            >
+              <Plus size={14} className="text-slate-300" />
+            </button>
+          </div>
+        </div>
+      </div>
 
-              return (
-                <div
-                  key={trade.id}
-                  className="bg-slate-900/60 border border-slate-800 p-3 rounded-lg flex justify-between items-center shadow-md hover:shadow-lg transition"
-                >
-                  <div>
-                    <div className="font-semibold">{trade.symbol}</div>
-                    <div className="text-xs text-slate-400">
-                      {trade.remaining > 0
-                        ? `${trade.remaining}s left`
-                        : `${trade.status}`}
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div
-                      className={`font-bold ${
-                        trade.remaining > 0
-                          ? candleColor === "green"
-                            ? "text-emerald-400"
-                            : "text-red-400"
-                          : ""
-                      }`}
-                    >
-                      {trade.payout} ₹
-                    </div>
-                    <div
-                      className={`text-xs font-medium ${
-                        trade.direction === "UP"
-                          ? "text-emerald-400"
-                          : "text-red-400"
-                      }`}
-                    >
-                      {trade.direction}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+      {/* Trade Buttons */}
+      <div className="px-4 pb-4 space-y-2 flex-shrink-0">
+        <button
+          onClick={() => handleTrade("UP")}
+          className="w-full bg-gradient-to-r from-green-500 via-green-600 to-emerald-600 hover:from-green-600 hover:via-green-700 hover:to-emerald-700 py-3 rounded-xl font-bold text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
+        >
+          <div className="flex items-center justify-center gap-2">
+            <TrendingUp className="w-4 h-4" />
+            <span>Call • ₹{(investment * 1.65).toLocaleString()}</span>
           </div>
-        )}
+        </button>
+        <button
+          onClick={() => handleTrade("DOWN")}
+          className="w-full bg-gradient-to-r from-red-500 via-red-600 to-rose-600 hover:from-red-600 hover:via-red-700 hover:to-rose-700 py-3 rounded-xl font-bold text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
+        >
+          <div className="flex items-center justify-center gap-2">
+            <TrendingDown className="w-4 h-4" />
+            <span>Put • ₹{(investment * 1.65).toLocaleString()}</span>
+          </div>
+        </button>
+      </div>
+
+      {/* Trade History */}
+      <div className="flex-1 px-4 pb-4 min-h-0">
+        <div className="bg-slate-800/30 rounded-xl h-full flex flex-col border border-slate-600/30">
+          <div className="flex items-center justify-between p-3 border-b border-slate-600/30">
+            <div className="flex items-center gap-2">
+              <Clock className="w-4 h-4 text-blue-400" />
+              <span className="text-sm font-semibold">Recent Trades</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="bg-blue-500 text-xs px-2 py-1 rounded-full font-bold">
+                {trades.length}
+              </div>
+              <button
+                onClick={() => navigate("/dashboard/")}
+                className="text-xs text-blue-400 hover:text-blue-300 font-medium transition-colors"
+              >
+                View All →
+              </button>
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-3">
+            {trades.length === 0 ? (
+              <div className="text-center text-slate-400 py-8">
+                <ShoppingCart size={32} className="mx-auto mb-3 opacity-50" />
+                <p className="text-sm">No trades yet</p>
+                <p className="text-xs text-slate-500 mt-1">Start your first trade above</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {trades.slice(0, 5).map((trade, index) => {
+                  const latestPrice = window.latestCandleClose || trade.price;
+                  const candleColor = window.latestCandleColor || "green";
+
+                  return (
+                    <div
+                      key={trade.id}
+                      className="bg-slate-800/50 border border-slate-600/40 rounded-lg p-3 hover:bg-slate-700/50 transition-colors"
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <div className="flex items-center gap-2">
+                          <div className={`w-2 h-2 rounded-full ${trade.direction === "UP" ? "bg-green-400" : "bg-red-400"}`} />
+                          <span className="text-sm font-medium">{trade.symbol}</span>
+                        </div>
+                        <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                          trade.remaining > 0 
+                            ? "bg-blue-500/20 text-blue-300" 
+                            : trade.status === "Won" 
+                              ? "bg-green-500/20 text-green-300"
+                              : "bg-red-500/20 text-red-300"
+                        }`}>
+                          {trade.remaining > 0 ? `${trade.remaining}s` : trade.status}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-slate-400">
+                          {trade.direction} • ₹{trade.investment.toLocaleString()}
+                        </span>
+                        <span className={`text-sm font-bold ${
+                          trade.remaining > 0
+                            ? candleColor === "green" 
+                              ? "text-green-400" 
+                              : "text-red-400"
+                            : trade.status === "Won"
+                              ? "text-green-400"
+                              : "text-red-400"
+                        }`}>
+                          ₹{trade.payout.toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
