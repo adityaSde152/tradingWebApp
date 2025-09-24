@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
   const fetchUser = async () => {
     try {
       const res = await getUser();
-      setUser(res?.userData);
+      setUser(res?.user);
     } catch (error) {
       console.log(error);
       setUser(null);
