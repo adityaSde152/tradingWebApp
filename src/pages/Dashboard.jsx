@@ -6,9 +6,8 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
 const Dashboard = () => {
-  const { user, setUser } = useAuth();
+  const { user, setUser, isLoading, setIsLoading } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
-
   return (
     <div className="flex h-screen bg-dark">
       {/* Main Content */}
@@ -37,6 +36,8 @@ const Dashboard = () => {
             setUser={setUser}
             isEditing={isEditing}
             setIsEditing={setIsEditing}
+            isLoading={isLoading}
+            setIsLoading={setIsLoading}
           />
 
           <div className="col-span-3 space-y-6">

@@ -10,6 +10,9 @@ import Login from "./pages/Login";
 import { Toaster } from "react-hot-toast";
 import Market from "./pages/Market";
 import Trade from "./pages/Trade";
+import Blog from "./pages/Blog";
+import AllArticle from "./components/Blogs/AllArticle";
+import ArticlePage from "./components/Blogs/ArticlePage";
 
 const App = () => {
   return (
@@ -25,11 +28,14 @@ const App = () => {
       />
       <ChatBot />
       <Routes>
-        <Route path="/demo-account" element={<Market/>}/>
+        <Route path="/demo-account" element={<Market />} />
         <Route path="/" element={<MainNavigation />}>
           <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
-          
+          {/* Blogs Routes */}
+          <Route path="blog" element={<Blog />} />
+          <Route path="blog/:id" element={<ArticlePage />} />
+          <Route path="blog/all" element={<AllArticle />} />
           <Route path="*" element={<PageNotFound />} />
         </Route>
 

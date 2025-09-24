@@ -28,8 +28,6 @@ const Home = () => {
       <DayNight />
       <FaqSection />
       <LazyComponent Component={MetallicCard} />
-
-      <Footer />
     </div>
   );
 };

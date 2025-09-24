@@ -1,18 +1,45 @@
 import React, { useState } from "react";
+import { updateProfile } from "../../services/userServices";
+import { useAuth } from "../../context/AuthContext";
+import { useEffect } from "react";
+import toast from "react-hot-toast";
 
-const UserProfile = ({ user, setUser, isEditing, setIsEditing }) => {
-  const [formData, setFormData] = useState(user);
+const UserProfile = ({ isEditing, setIsEditing, isLoading, setIsLoading }) => {
+  const { user, setUser } = useAuth();
+  const [formData, setFormData] = useState(null);
 
   const handleOnChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value, files } = e.target;
+    if (files) {
+      setFormData({ ...formData, [name]: files[0] });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+  const handleOnSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      const res = await updateProfile(formData);
+      setUser(res.user);
+      toast.success(res?.message);
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    } finally {
+      setIsEditing(false);
+      setIsLoading(false);
+    }
   };
 
-  const handleOnSubmit = (e) => {
-    e.preventDefault();
-    setUser(formData);
-    setIsEditing(false);
-  };
-  // console.log(formData);
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        image: user?.image || "",
+        name: user?.name || "",
+      });
+    }
+  }, [user]);
   return (
     <div className="col-span-3 lg:col-span-1 bg-gray-800 p-6 rounded-xl shadow-sm border w-full">
       <div className="flex flex-row lg:flex-col gap-4">
@@ -69,11 +96,22 @@ const UserProfile = ({ user, setUser, isEditing, setIsEditing }) => {
             <form onSubmit={handleOnSubmit} className="space-y-3">
               {/* Full Name */}
               <div className="flex flex-col">
-                <label htmlFor="fullName">Full name</label>
+                <label htmlFor="image">Profile Image</label>
+                <input
+                  type="file"
+                  name="image"
+                  accept="image/*"
+                  onChange={handleOnChange}
+                  className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2"
+                />
+              </div>
+              {/* Full Name */}
+              <div className="flex flex-col">
+                <label htmlFor="name">Full name</label>
                 <input
                   type="text"
-                  name="fullName"
-                  value={formData.fullName}
+                  name="name"
+                  value={formData?.name}
                   onChange={handleOnChange}
                   placeholder="Full Name"
                   className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2"
@@ -165,8 +203,11 @@ const UserProfile = ({ user, setUser, isEditing, setIsEditing }) => {
                 >
                   Cancel
                 </button>
-                <button className="w-full py-2 bg-green hover:bg-green/90 rounded-md font-semibold cursor-pointer">
-                  Update Profile
+                <button
+                  type="submit"
+                  className="w-full py-2 bg-green hover:bg-green/90 rounded-md font-semibold cursor-pointer"
+                >
+                  {isLoading ? "Processing..." : "Updated Profile"}
                 </button>
               </div>
             </form>

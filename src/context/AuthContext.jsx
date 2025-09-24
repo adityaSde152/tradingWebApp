@@ -1,5 +1,4 @@
 import { createContext, useState, useEffect, useContext } from "react";
-import axios from "axios";
 import { refreshAccessToken } from "../services/authServices";
 import { getUser } from "../services/userServices";
 
@@ -15,22 +14,35 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await refreshAccessToken();
     } catch (err) {
-      console.error("Refresh token error:", err.response?.data || err.message);
+      console.error("Refresh token error:", err.response?.data || err?.message);
     }
   };
 
+  //  Fetch User Function
   const fetchUser = async () => {
-    const user = await getUser();
-    setUser(user.userData);
+    try {
+      const res = await getUser();
+      setUser(res?.userData);
+    } catch (error) {
+      console.log(error);
+      setUser(null);
+    }
   };
 
+  // Check if user is logged in on mount
   useEffect(() => {
-    refreshToken();
     fetchUser();
-
-    const interval = setInterval(refreshToken, 2 * 58 * 1000);
-    return () => clearInterval(interval);
   }, []);
+
+  // Start refresh token loop when user exists
+  useEffect(() => {
+    if (!user) return; // No user = No refresh
+
+    refreshToken(); // Refresh immediately on login
+
+    const interval = setInterval(refreshToken, 60 * 1000);
+    return () => clearInterval(interval);
+  }, [user]);
 
   const value = {
     user,

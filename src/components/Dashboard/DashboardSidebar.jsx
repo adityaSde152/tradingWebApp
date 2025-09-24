@@ -10,8 +10,11 @@ import {
   FaUsers,
 } from "react-icons/fa";
 import { BiSupport } from "react-icons/bi";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import assets from "../../assets/assets";
+import { logoutUser } from "../../services/authServices";
+import toast from "react-hot-toast";
+import { useAuth } from "../../context/AuthContext";
 
 const sidebarItems = [
   { name: "Profile", icon: <FaUser />, link: "profile" },
@@ -22,10 +25,22 @@ const sidebarItems = [
   { name: "Referral Program", icon: <FaUsers />, link: "referral" },
   { name: "Settings", icon: <FaCog />, link: "settings" },
   { name: "Support", icon: <BiSupport />, link: "support" },
-  { name: "Logout", icon: <FaSignOutAlt />, link: "logout" },
 ];
 
 const DashboardSidebar = () => {
+  const { setUser } = useAuth();
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    try {
+      const res = await logoutUser();
+      toast.success(res?.message);
+      setUser(null);
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+      toast.error(error);
+    }
+  };
   return (
     <aside className="w-20 group hover:w-50 h-screen bg-gray-800 border-r shadow-2xl border-gray-200 text-white flex flex-col p-4 duration-200">
       {/* Logo + Title */}
@@ -79,6 +94,37 @@ const DashboardSidebar = () => {
             )}
           </NavLink>
         ))}
+
+        {/* Logout Button */}
+        <NavLink
+          key={"logout"}
+          to={"logout"}
+          onClick={handleLogout}
+          className={({ isActive }) =>
+            `flex relative items-center gap-3 pr-10 py-2 rounded-r-lg ${
+              isActive ? "bg-gray-800" : "bg-transparent"
+            } hover:bg-gray-700 transition duration-200`
+          }
+        >
+          {({ isActive }) => (
+            <>
+              {isActive && (
+                <span className="absolute w-1 h-[80%] bg-green rounded-r-md"></span>
+              )}
+              <span
+                className={`text-2xl ml-2 flex-shrink-0 ${
+                  isActive ? "text-green" : ""
+                }`}
+              >
+                {<FaSignOutAlt />}
+              </span>
+              {/* ✅ Fade in/out only text */}
+              <span className="text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                {"Logout"}
+              </span>
+            </>
+          )}
+        </NavLink>
       </nav>
     </aside>
   );
