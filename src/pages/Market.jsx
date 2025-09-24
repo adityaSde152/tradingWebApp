@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import LiveChart from "../components/Market/LiveChart";
-import TradingSideBar from "../components/Market/TradingSideBar";
 import SymbolSelector from "../components/Market/SymbolSelector";
 import IntervalSelector from "../components/Market/IntervalSelector";
-import DashboardSidebar from "../components/Dashboard/DashboardSidebar";
+import TradingSideBar from "../components/Market/TradingSideBar";
+// import DashboardSideBar from "../components/Dashboard/DashboardSideBar";
 
 const Market = () => {
   const [symbol, setSymbol] = useState("BTCUSDT");
@@ -24,8 +24,8 @@ const Market = () => {
   }, []);
 
   return (
-    <div 
-      key={refreshKey} 
+    <div
+      key={refreshKey}
       className="flex h-screen bg-gray-900 text-white overflow-hidden"
     >
       {/* Left: dashboard sidebar (uncomment if needed) */}
@@ -34,7 +34,7 @@ const Market = () => {
       {/* Center: chart area */}
       <div className="flex-1 flex flex-col min-w-0 min-h-0">
         {/* Chart container (fills remaining height) */}
-        <div 
+        <div
           className="flex-1 relative min-h-0 min-w-0"
           style={{
             // Ensure the chart container takes up available space
@@ -46,7 +46,7 @@ const Market = () => {
           <div className="flex-1 relative min-h-0 min-w-0">
             <LiveChart symbol={symbol} interval={interval} />
           </div>
-          
+
           {/* Overlayed controls */}
           <SymbolSelector onChange={setSymbol} />
           <IntervalSelector interval={interval} onChange={setInterval} />
@@ -54,12 +54,7 @@ const Market = () => {
       </div>
 
       {/* Right: trading sidebar */}
-      <TradingSideBar 
-        symbol={symbol} 
-        onSwitch={() => {
-          // Optional: add symbol switch logic here
-        }} 
-      />
+      <TradingSideBar symbol={symbol} onSwitch={() => { }} />
     </div>
   );
 };

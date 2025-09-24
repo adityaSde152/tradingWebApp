@@ -127,11 +127,11 @@ const TradingSidebar = ({ symbol, onSwitch }) => {
       {/* Header with Quick Actions */}
       <div className="p-4 border-b border-slate-700/30">
         <div className="flex gap-2 mb-3">
-          <button className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 py-2 px-3 rounded-lg text-xs font-bold transition-all duration-200 shadow-md hover:shadow-lg">
+          <button onClick={()=>navigate(`/dashboard/deposit`)} className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 py-2 px-3 rounded-lg text-xs font-bold transition-all duration-200 shadow-md hover:shadow-lg">
             <DollarSign className="w-3 h-3 inline mr-1" />
             Fund
           </button>
-          <button className="flex-1 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 py-2 px-3 rounded-lg text-xs font-bold transition-all duration-200 shadow-md hover:shadow-lg">
+          <button onClick={()=>navigate(`/dashboard/withdrawal`)} className="flex-1 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 py-2 px-3 rounded-lg text-xs font-bold transition-all duration-200 shadow-md hover:shadow-lg">
             <Wallet className="w-3 h-3 inline mr-1" />
             Withdraw
           </button>

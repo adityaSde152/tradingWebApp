@@ -13,6 +13,10 @@ import Trade from "./pages/Trade";
 import Blog from "./pages/Blog";
 import AllArticle from "./components/Blogs/AllArticle";
 import ArticlePage from "./components/Blogs/ArticlePage";
+import Deposit from "./pages/Transaction/Deposit";
+import CryptoDeposit from "./pages/Transaction/CryptoDeposit";
+import Withdrawl from "./pages/Transaction/Withdrawal";
+import Withdrawal from "./pages/Transaction/Withdrawal";
 
 const App = () => {
   return (
@@ -45,7 +49,11 @@ const App = () => {
           <Route path="profile" element={<Dashboard />} />
           <Route path="markets" element={<Market />} />
           <Route path="trade" element={<Trade />} />
+          <Route path="deposit" element={<Deposit/>}/>
+          <Route path="withdrawal" element={<Withdrawal/>}/>
+          <Route path="/dashboard/deposit/:crypto" element={<CryptoDeposit/>} /> 
           <Route path="*" element={<PageNotFound />} />
+          
         </Route>
         <Route path="*" element={<PageNotFound />} />
       </Routes>
