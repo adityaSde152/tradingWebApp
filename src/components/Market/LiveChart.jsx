@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useCallback, useMemo } from "react"
 import { createChart } from "lightweight-charts";
 import { useTrade } from "../../context/TradeContext";
 
-const LiveChart = ({ symbol, interval }) => {
+const LiveChart = ({ symbol, interval, tradeHoverState }) => {
   const chartContainerRef = useRef(null);
   const chartRef = useRef(null);
   const candleSeriesRef = useRef(null);
@@ -12,6 +12,13 @@ const LiveChart = ({ symbol, interval }) => {
   const lastSizeRef = useRef({ width: 0, height: 0 });
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // ✅ FIXED: Stable refs to prevent re-creation
+  const hoverOverlayUpRef = useRef(null);
+  const hoverOverlayDownRef = useRef(null);
+  const currentPriceRef = useRef(null);
+  const isUpdatingOverlayRef = useRef(false);
+  const componentMountedRef = useRef(true);
 
   // Enhanced refs for legend & tooltip
   const legendRef = useRef(null);
@@ -35,6 +42,75 @@ const LiveChart = ({ symbol, interval }) => {
     if (price >= 0.01) return 5;
     return 6;
   }, []);
+
+  // ✅ FIXED: Stable updateDynamicOverlay function with proper conditions
+  const updateDynamicOverlay = useCallback(() => {
+    // ✅ Prevent execution if component is unmounted or already updating
+    if (!componentMountedRef.current || isUpdatingOverlayRef.current) return;
+    if (!hoverOverlayUpRef.current || !hoverOverlayDownRef.current || !chartContainerRef.current) return;
+
+    isUpdatingOverlayRef.current = true;
+
+    try {
+      // ✅ Clear overlays if no hover state
+      if (!tradeHoverState) {
+        hoverOverlayUpRef.current.style.display = 'none';
+        hoverOverlayDownRef.current.style.display = 'none';
+        isUpdatingOverlayRef.current = false;
+        return;
+      }
+
+      // ✅ Only update if we have valid price and chart series
+      const currentPrice = currentPriceRef.current;
+      if (!currentPrice || !candleSeriesRef.current) {
+        isUpdatingOverlayRef.current = false;
+        return;
+      }
+
+      // ✅ Get Y coordinate safely
+      const priceYCoordinate = candleSeriesRef.current.priceToCoordinate(currentPrice);
+      
+      if (priceYCoordinate === null || priceYCoordinate === undefined || priceYCoordinate < 0) {
+        isUpdatingOverlayRef.current = false;
+        return;
+      }
+
+      const containerRect = chartContainerRef.current.getBoundingClientRect();
+      if (containerRect.height <= 0) {
+        isUpdatingOverlayRef.current = false;
+        return;
+      }
+
+      if (tradeHoverState === 'UP') {
+        // Green overlay ABOVE the current price line
+        hoverOverlayUpRef.current.style.display = 'block';
+        hoverOverlayUpRef.current.style.top = '0px';
+        hoverOverlayUpRef.current.style.height = `${Math.max(0, priceYCoordinate)}px`;
+        hoverOverlayUpRef.current.style.background = 'linear-gradient(to bottom, rgba(34, 197, 94, 0.12), rgba(34, 197, 94, 0.05))';
+        hoverOverlayUpRef.current.style.borderBottom = '1px solid rgba(34, 197, 94, 0.3)';
+        hoverOverlayUpRef.current.style.borderTop = 'none';
+        
+        // Hide the down overlay
+        hoverOverlayDownRef.current.style.display = 'none';
+        
+      } else if (tradeHoverState === 'DOWN') {
+        // Red overlay BELOW the current price line
+        hoverOverlayDownRef.current.style.display = 'block';
+        hoverOverlayDownRef.current.style.top = `${priceYCoordinate}px`;
+        hoverOverlayDownRef.current.style.height = `${Math.max(0, containerRect.height - priceYCoordinate)}px`;
+        hoverOverlayDownRef.current.style.background = 'linear-gradient(to top, rgba(239, 68, 68, 0.12), rgba(239, 68, 68, 0.05))';
+        hoverOverlayDownRef.current.style.borderTop = '1px solid rgba(239, 68, 68, 0.3)';
+        hoverOverlayDownRef.current.style.borderBottom = 'none';
+        
+        // Hide the up overlay
+        hoverOverlayUpRef.current.style.display = 'none';
+      }
+    } catch (error) {
+      console.warn('Error updating dynamic overlay:', error);
+    } finally {
+      isUpdatingOverlayRef.current = false;
+    }
+  }, [tradeHoverState]);
 
   const chartConfig = useMemo(() => ({
     width: 800,
@@ -81,6 +157,8 @@ const LiveChart = ({ symbol, interval }) => {
   }), []);
 
   const handleResize = useCallback(() => {
+    if (!componentMountedRef.current) return;
+    
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
     }
@@ -88,7 +166,7 @@ const LiveChart = ({ symbol, interval }) => {
     animationFrameRef.current = requestAnimationFrame(() => {
       const el = chartContainerRef.current;
       const ch = chartRef.current;
-      if (!el || !ch) return;
+      if (!el || !ch || !componentMountedRef.current) return;
 
       const rect = el.getBoundingClientRect();
       const width = Math.max(300, Math.round(rect.width));
@@ -97,22 +175,41 @@ const LiveChart = ({ symbol, interval }) => {
       if (lastSizeRef.current.width !== width || lastSizeRef.current.height !== height) {
         lastSizeRef.current = { width, height };
         ch.applyOptions({ width, height });
+        // ✅ FIXED: Only update overlay if hovering
+        if (tradeHoverState) {
+          requestAnimationFrame(() => {
+            if (componentMountedRef.current && tradeHoverState) {
+              updateDynamicOverlay();
+            }
+          });
+        }
       }
     });
-  }, []);
+  }, [updateDynamicOverlay, tradeHoverState]);
 
   const throttledResize = useCallback(() => {
-    if (resizeTimeoutRef.current) return;
+    if (!componentMountedRef.current || resizeTimeoutRef.current) return;
     
     resizeTimeoutRef.current = setTimeout(() => {
-      handleResize();
+      if (componentMountedRef.current) {
+        handleResize();
+      }
       resizeTimeoutRef.current = null;
     }, 16);
   }, [handleResize]);
 
+  // ✅ FIXED: Effect for hover state - immediate update, no timeout
+  useEffect(() => {
+    if (componentMountedRef.current) {
+      updateDynamicOverlay(); // ✅ Call immediately without delay
+    }
+  }, [tradeHoverState, updateDynamicOverlay]);
+
+  // ✅ FIXED: Main chart initialization effect
   useEffect(() => {
     if (!chartContainerRef.current) return;
 
+    componentMountedRef.current = true;
     const container = chartContainerRef.current;
     const rect = container.getBoundingClientRect();
     
@@ -140,12 +237,44 @@ const LiveChart = ({ symbol, interval }) => {
 
     candleSeriesRef.current = candleSeries;
 
+    // ✅ Create overlay elements (only once)
+    if (!hoverOverlayUpRef.current) {
+      const hoverOverlayUp = document.createElement("div");
+      hoverOverlayUp.style.cssText = `
+        position: absolute;
+        left: 0;
+        right: 0;
+        display: none;
+        pointer-events: none;
+        z-index: 100;
+        transition: opacity 0.2s ease-in-out;
+        border-radius: 0;
+      `;
+      container.appendChild(hoverOverlayUp);
+      hoverOverlayUpRef.current = hoverOverlayUp;
+    }
+
+    if (!hoverOverlayDownRef.current) {
+      const hoverOverlayDown = document.createElement("div");
+      hoverOverlayDown.style.cssText = `
+        position: absolute;
+        left: 0;
+        right: 0;
+        display: none;
+        pointer-events: none;
+        z-index: 100;
+        transition: opacity 0.2s ease-in-out;
+        border-radius: 0;
+      `;
+      container.appendChild(hoverOverlayDown);
+      hoverOverlayDownRef.current = hoverOverlayDown;
+    }
+
     // ========== ENHANCED LEGEND & TOOLTIP CREATION ==========
-    // Create enhanced legend element positioned at bottom-left
     const legendEl = document.createElement("div");
     legendEl.style.cssText = `
       position: absolute;
-      bottom: 12px;
+      bottom: 30px;
       left: 12px;
       padding: 12px 16px;
       background: rgba(17, 24, 39, 0.85);
@@ -167,7 +296,6 @@ const LiveChart = ({ symbol, interval }) => {
     container.appendChild(legendEl);
     legendRef.current = legendEl;
 
-    // Create enhanced tooltip element with transparent background and subtle blur
     const tooltipEl = document.createElement("div");
     tooltipEl.style.cssText = `
       position: absolute;
@@ -192,12 +320,13 @@ const LiveChart = ({ symbol, interval }) => {
     `;
     container.appendChild(tooltipEl);
     tooltipRef.current = tooltipEl;
-    // ========================================================
 
-    // High-performance ResizeObserver
+    // ✅ ResizeObserver with proper cleanup
     let ro;
     if (typeof ResizeObserver !== "undefined") {
       ro = new ResizeObserver((entries) => {
+        if (!componentMountedRef.current) return;
+        
         for (const entry of entries) {
           if (entry.target === container) {
             const { width, height } = entry.contentRect;
@@ -208,7 +337,17 @@ const LiveChart = ({ symbol, interval }) => {
               lastSizeRef.current = { width: roundedWidth, height: roundedHeight };
               if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
               animationFrameRef.current = requestAnimationFrame(() => {
-                chartRef.current?.applyOptions({ width: roundedWidth, height: roundedHeight });
+                if (componentMountedRef.current && chartRef.current) {
+                  chartRef.current.applyOptions({ width: roundedWidth, height: roundedHeight });
+                  // ✅ FIXED: Only update overlay if hovering
+                  if (tradeHoverState) {
+                    requestAnimationFrame(() => {
+                      if (componentMountedRef.current && tradeHoverState) {
+                        updateDynamicOverlay();
+                      }
+                    });
+                  }
+                }
               });
             }
           }
@@ -220,8 +359,13 @@ const LiveChart = ({ symbol, interval }) => {
     window.addEventListener("resize", throttledResize, { passive: true });
 
     const onFsChange = () => {
+      if (!componentMountedRef.current) return;
       setIsFullscreen(!!document.fullscreenElement);
-      setTimeout(handleResize, 50);
+      setTimeout(() => {
+        if (componentMountedRef.current) {
+          handleResize();
+        }
+      }, 50);
     };
     document.addEventListener("fullscreenchange", onFsChange, { passive: true });
 
@@ -230,6 +374,7 @@ const LiveChart = ({ symbol, interval }) => {
     const MAX_SPACING = 60;
     let lastSpacing = 25;
     timeScale.subscribeVisibleTimeRangeChange(() => {
+      if (!componentMountedRef.current) return;
       const options = timeScale.options();
       const spacing = options.barSpacing || 25;
       if (Math.abs(spacing - lastSpacing) > 1) {
@@ -239,8 +384,10 @@ const LiveChart = ({ symbol, interval }) => {
       }
     });
 
-    // ========== ENHANCED CROSSHAIR HANDLER ==========
+    // ========== CROSSHAIR HANDLER ==========
     const crosshairHandler = (param) => {
+      if (!componentMountedRef.current) return;
+      
       try {
         if (!param || !param.time || !param.point) {
           if (tooltipRef.current) {
@@ -277,16 +424,14 @@ const LiveChart = ({ symbol, interval }) => {
         const prec = getPricePrecision(bar.close ?? 0);
         const fmt = (v) => (typeof v === "number" ? v.toFixed(prec) : v);
         
-        // Calculate price change
         const change = bar.close - bar.open;
         const changePercent = ((change / bar.open) * 100);
         const isPositive = change >= 0;
 
-        // Enhanced legend with more information
+        // Enhanced legend
         if (legendRef.current) {
           legendRef.current.innerHTML = `
             <div style="display: flex; flex-direction: column; gap: 8px;">
-              <!-- Header Row -->
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                 <div style="display: flex; align-items: center; gap: 8px;">
                   <div style="font-weight: 600; font-size: 14px; color: #60a5fa;">${symbol}</div>
@@ -297,7 +442,6 @@ const LiveChart = ({ symbol, interval }) => {
                 </div>
               </div>
               
-              <!-- OHLC Row -->
               <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; font-size: 12px;">
                 <div style="display: flex; flex-direction: column; align-items: center;">
                   <span style="color: #9ca3af; font-size: 10px; margin-bottom: 2px;">OPEN</span>
@@ -317,7 +461,6 @@ const LiveChart = ({ symbol, interval }) => {
                 </div>
               </div>
               
-              <!-- Change Row -->
               <div style="display: flex; justify-content: center; align-items: center; gap: 8px; padding-top: 4px; border-top: 1px solid rgba(75, 85, 99, 0.3);">
                 <span style="color: ${isPositive ? '#22c55e' : '#ef4444'}; font-weight: 600; font-size: 13px;">
                   ${isPositive ? '+' : ''}${fmt(change)}
@@ -336,7 +479,6 @@ const LiveChart = ({ symbol, interval }) => {
           let left = param.point.x + 15;
           let top = param.point.y - 10;
 
-          // Prevent tooltip from going off-screen
           if (left + 220 > containerRect.width) {
             left = param.point.x - 235;
           }
@@ -351,7 +493,6 @@ const LiveChart = ({ symbol, interval }) => {
 
           tooltipRef.current.innerHTML = `
             <div style="display: flex; flex-direction: column; gap: 8px;">
-              <!-- Time Header -->
               <div style="text-align: center; padding-bottom: 6px; border-bottom: 1px solid rgba(156, 163, 175, 0.2);">
                 <div style="font-weight: 600; font-size: 12px; color: #60a5fa; margin-bottom: 2px;">
                   ${new Date(param.time * 1000).toLocaleDateString()}
@@ -361,7 +502,6 @@ const LiveChart = ({ symbol, interval }) => {
                 </div>
               </div>
               
-              <!-- Price Data -->
               <div style="display: flex; flex-direction: column; gap: 4px; font-size: 11px;">
                 <div style="display: flex; justify-content: space-between;">
                   <span style="color: #9ca3af;">Open:</span>
@@ -381,7 +521,6 @@ const LiveChart = ({ symbol, interval }) => {
                 </div>
               </div>
               
-              <!-- Change Indicator -->
               <div style="text-align: center; padding-top: 6px; border-top: 1px solid rgba(156, 163, 175, 0.2);">
                 <div style="color: ${isPositive ? '#22c55e' : '#ef4444'}; font-weight: 600; font-size: 11px;">
                   ${isPositive ? '+' : ''}${fmt(change)} (${isPositive ? '+' : ''}${changePercent.toFixed(2)}%)
@@ -396,10 +535,11 @@ const LiveChart = ({ symbol, interval }) => {
     };
 
     chart.subscribeCrosshairMove(crosshairHandler);
-    // ===============================================
 
-    // Data fetching and WebSocket logic (keeping original implementation)
+    // Data fetching
     const fetchHistoricalData = async () => {
+      if (!componentMountedRef.current) return;
+      
       try {
         const response = await fetch(
           `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=500`,
@@ -409,6 +549,8 @@ const LiveChart = ({ symbol, interval }) => {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         
         const data = await response.json();
+        if (!componentMountedRef.current) return;
+        
         const formatted = data.map((item) => ({
           time: item[0] / 1000,
           open: parseFloat(item[1]),
@@ -417,10 +559,12 @@ const LiveChart = ({ symbol, interval }) => {
           close: parseFloat(item[4]),
         }));
 
-        if (formatted.length === 0) return;
+        if (formatted.length === 0 || !componentMountedRef.current) return;
 
         const latestClose = formatted[formatted.length - 1].close;
         const precision = getPricePrecision(latestClose);
+        
+        currentPriceRef.current = latestClose;
         
         candleSeries.applyOptions({
           priceFormat: { type: "price", precision, minMove: 10 ** -precision },
@@ -432,12 +576,24 @@ const LiveChart = ({ symbol, interval }) => {
 
         candleSeries.setData(formatted);
         
-        requestAnimationFrame(() => {
-          chart.timeScale().setVisibleLogicalRange({ 
-            from: Math.max(0, formatted.length - 50), 
-            to: formatted.length 
+        if (componentMountedRef.current) {
+          requestAnimationFrame(() => {
+            if (componentMountedRef.current && chartRef.current) {
+              chart.timeScale().setVisibleLogicalRange({ 
+                from: Math.max(0, formatted.length - 50), 
+                to: formatted.length 
+              });
+              // ✅ FIXED: Only update overlay if hovering
+              if (tradeHoverState) {
+                requestAnimationFrame(() => {
+                  if (componentMountedRef.current && tradeHoverState) {
+                    updateDynamicOverlay();
+                  }
+                });
+              }
+            }
           });
-        });
+        }
         
       } catch (err) {
         console.warn("Historical data fetch failed:", err.message);
@@ -446,17 +602,25 @@ const LiveChart = ({ symbol, interval }) => {
 
     fetchHistoricalData();
 
-    // WebSocket connection (keeping original implementation)
+    // ✅ FIXED: WebSocket with proper cleanup and no interference with hover state
     let ws;
     let wsReconnectTimer;
     
     const connectWebSocket = () => {
+      if (!componentMountedRef.current) return;
+      
       try {
         ws = new WebSocket(`wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}@kline_${interval}`);
         
-        ws.onopen = () => console.log("WebSocket connected");
+        ws.onopen = () => {
+          if (componentMountedRef.current) {
+            console.log("WebSocket connected");
+          }
+        };
         
         ws.onmessage = (event) => {
+          if (!componentMountedRef.current) return;
+          
           try {
             const { k } = JSON.parse(event.data);
             const time = Math.floor(k.t / 1000);
@@ -468,38 +632,58 @@ const LiveChart = ({ symbol, interval }) => {
               close: parseFloat(k.c),
             };
             
-            candleSeries.update(candle);
-            window.latestCandleColor = k.c > k.o ? "green" : "red";
-            window.latestCandleClose = parseFloat(k.c);
+            currentPriceRef.current = parseFloat(k.c);
+            
+            if (componentMountedRef.current && candleSeriesRef.current) {
+              candleSeries.update(candle);
+              window.latestCandleColor = k.c > k.o ? "green" : "red";
+              window.latestCandleClose = parseFloat(k.c);
+
+              // ✅ FIXED: Only update overlay if currently hovering and not already updating
+              if (!isUpdatingOverlayRef.current && tradeHoverState) {
+                requestAnimationFrame(() => {
+                  if (componentMountedRef.current && tradeHoverState) {
+                    updateDynamicOverlay();
+                  }
+                });
+              }
+            }
 
             const nextClose = k.T;
             if (countdownRef.current) clearInterval(countdownRef.current);
             
-            countdownRef.current = setInterval(() => {
-              const remaining = Math.max(0, Math.floor((nextClose - Date.now()) / 1000));
-              const minutes = String(Math.floor(remaining / 60)).padStart(2, "0");
-              const seconds = String(remaining % 60).padStart(2, "0");
-
-              if (candleSeriesRef.current) {
-                const tradeMarkers = candleSeriesRef.current.markers()?.filter((m) => m.id?.startsWith("trade_")) || [];
-                const allMarkers = [
-                  ...tradeMarkers,
-                  { 
-                    id: "countdown", 
-                    time, 
-                    position: "belowBar", 
-                    color: "#ffffff", 
-                    text: `${minutes}:${seconds}`,
-                    size: "small"
-                  },
-                ];
+            if (componentMountedRef.current) {
+              countdownRef.current = setInterval(() => {
+                if (!componentMountedRef.current) {
+                  clearInterval(countdownRef.current);
+                  return;
+                }
                 
-                allMarkers.sort((a, b) => a.time - b.time);
-                candleSeriesRef.current.setMarkers(allMarkers);
-              }
+                const remaining = Math.max(0, Math.floor((nextClose - Date.now()) / 1000));
+                const minutes = String(Math.floor(remaining / 60)).padStart(2, "0");
+                const seconds = String(remaining % 60).padStart(2, "0");
 
-              if (remaining <= 0) clearInterval(countdownRef.current);
-            }, 1000);
+                if (candleSeriesRef.current && componentMountedRef.current) {
+                  const tradeMarkers = candleSeriesRef.current.markers()?.filter((m) => m.id?.startsWith("trade_")) || [];
+                  const allMarkers = [
+                    ...tradeMarkers,
+                    { 
+                      id: "countdown", 
+                      time, 
+                      position: "belowBar", 
+                      color: "#ffffff", 
+                      text: `${minutes}:${seconds}`,
+                      size: "small"
+                    },
+                  ];
+                  
+                  allMarkers.sort((a, b) => a.time - b.time);
+                  candleSeriesRef.current.setMarkers(allMarkers);
+                }
+
+                if (remaining <= 0) clearInterval(countdownRef.current);
+              }, 1000);
+            }
             
           } catch (parseErr) {
             console.warn("WebSocket message parse error:", parseErr);
@@ -508,33 +692,60 @@ const LiveChart = ({ symbol, interval }) => {
 
         ws.onerror = (error) => console.warn("WebSocket error:", error);
         ws.onclose = () => {
-          console.log("WebSocket closed, attempting reconnect...");
-          wsReconnectTimer = setTimeout(connectWebSocket, 3000);
+          if (componentMountedRef.current) {
+            console.log("WebSocket closed, attempting reconnect...");
+            wsReconnectTimer = setTimeout(() => {
+              if (componentMountedRef.current) {
+                connectWebSocket();
+              }
+            }, 3000);
+          }
         };
         
       } catch (err) {
         console.warn("WebSocket connection failed:", err);
-        wsReconnectTimer = setTimeout(connectWebSocket, 5000);
+        if (componentMountedRef.current) {
+          wsReconnectTimer = setTimeout(() => {
+            if (componentMountedRef.current) {
+              connectWebSocket();
+            }
+          }, 5000);
+        }
       }
     };
 
     connectWebSocket();
 
     const clockTimer = setInterval(() => {
-      setCurrentTime(new Date());
+      if (componentMountedRef.current) {
+        setCurrentTime(new Date());
+      }
     }, 1000);
 
-    // Cleanup function
+    // ✅ COMPREHENSIVE CLEANUP FUNCTION
     return () => {
+      componentMountedRef.current = false;
+      isUpdatingOverlayRef.current = false;
+      
       if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
       if (resizeTimeoutRef.current) clearTimeout(resizeTimeoutRef.current);
       if (wsReconnectTimer) clearTimeout(wsReconnectTimer);
       if (ws && ws.readyState <= WebSocket.OPEN) ws.close();
+      if (countdownRef.current) clearInterval(countdownRef.current);
+      clearInterval(clockTimer);
 
       try {
         chartRef.current?.unsubscribeCrosshairMove(crosshairHandler);
       } catch(e) {}
 
+      if (hoverOverlayUpRef.current) {
+        try { hoverOverlayUpRef.current.remove(); } catch(e) {}
+        hoverOverlayUpRef.current = null;
+      }
+      if (hoverOverlayDownRef.current) {
+        try { hoverOverlayDownRef.current.remove(); } catch(e) {}
+        hoverOverlayDownRef.current = null;
+      }
       if (tooltipRef.current) {
         try { tooltipRef.current.remove(); } catch(e) {}
         tooltipRef.current = null;
@@ -548,16 +759,15 @@ const LiveChart = ({ symbol, interval }) => {
         chartRef.current.remove();
         chartRef.current = null;
       }
+      candleSeriesRef.current = null;
 
       if (ro) ro.disconnect();
       window.removeEventListener("resize", throttledResize);
       document.removeEventListener("fullscreenchange", onFsChange);
-      if (countdownRef.current) clearInterval(countdownRef.current);
-      clearInterval(clockTimer);
     };
-  }, [symbol, interval, chartConfig, throttledResize, handleResize, getPricePrecision]);
+  }, [symbol, interval]); // ✅ Only symbol and interval dependencies
 
-  // Trade markers logic (keeping original implementation)
+  // Trade markers logic
   const tradeMarkers = useMemo(() => {
     return trades
       .filter((t) => t.symbol === symbol && t.remaining > 0)
@@ -573,7 +783,7 @@ const LiveChart = ({ symbol, interval }) => {
   }, [trades, symbol]);
 
   useEffect(() => {
-    if (!candleSeriesRef.current) return;
+    if (!candleSeriesRef.current || !componentMountedRef.current) return;
 
     const currentMarkers = candleSeriesRef.current.markers()?.filter((m) => !m.id?.startsWith("trade_")) || [];
     const allMarkers = [...currentMarkers, ...tradeMarkers];

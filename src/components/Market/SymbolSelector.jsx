@@ -13,7 +13,7 @@ const symbols = [
   { label: "Litecoin (LTC) / USDT", value: "LTCUSDT" },
 ];
 
-// === Quotex-style formula helpers ===
+// === Helpers ===
 const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 
 const intervalToMinutes = (interval) => {
@@ -24,7 +24,6 @@ const intervalToMinutes = (interval) => {
   return 1;
 };
 
-// default coefficients (tweak to tune)
 const COEFFS = { A: 50, B: 6, C: 20, D: 1, minP: 60, maxP: 95 };
 
 function computeFeatures(klines) {
@@ -46,13 +45,11 @@ function predictPayout(klines, interval) {
   const Tmin = intervalToMinutes(interval);
   const invVol = 1 / Math.max(1e-6, vol_pct);
 
-  // Adjust 1m interval for realistic payouts
   const B = interval === "1m" ? 0.5 * COEFFS.B : COEFFS.B;
   const C = interval === "1m" ? 0.5 * COEFFS.C : COEFFS.C;
 
   const raw = COEFFS.A + B * invVol + C * avgAbsReturn_pct + COEFFS.D * (1 / Tmin);
 
-  // Clamp payout: 1m -> 75-85%, others -> COEFFS.minP - COEFFS.maxP
   const minP = interval === "1m" ? 75 : COEFFS.minP;
   const maxP = interval === "1m" ? 85 : COEFFS.maxP;
 
@@ -68,20 +65,15 @@ const SymbolSelector = ({ onChange, interval = "1m" }) => {
 
   const fetchSymbolData = async (symbol) => {
     try {
-      // 24h change & last price
-      const res1 = await fetch(
-        `https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}`
-      );
+      const res1 = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}`);
       const data1 = await res1.json();
 
-      // Only fetch 1m candles for tabs display
       const res1m = await fetch(
         `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=1m&limit=30`
       );
       const klines1m = await res1m.json();
       const return1m = predictPayout(klines1m, "1m");
 
-      // For dropdown table, also fetch 5m data
       const res5m = await fetch(
         `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=5m&limit=30`
       );
@@ -135,10 +127,20 @@ const SymbolSelector = ({ onChange, interval = "1m" }) => {
 
   return (
     <div className="absolute top-3 left-3 z-20">
-      {/* Fixed container for tabs and button */}
       <div className="flex items-start">
-        {/* Scrollable tabs container */}
-        <div className="flex space-x-2 max-w-[calc(100vw-200px)] overflow-x-auto scrollbar-hide">
+        {/* Fixed + button */}
+        <button
+          onClick={() => {
+            setOpen(!open);
+            symbols.forEach((s) => fetchSymbolData(s.value));
+          }}
+          className="flex-shrink-0 w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded-lg text-white font-bold text-lg flex items-center justify-center transition-all duration-200 shadow-lg hover:shadow-xl backdrop-blur-md border border-blue-400/30"
+        >
+          +
+        </button>
+
+        {/* Tabs attached to the right of button */}
+        <div className="flex space-x-2 ml-2 max-w-[calc(100vw-80px)] overflow-x-auto scrollbar-hide">
           {tabs.map((s) => (
             <div
               key={s.value}
@@ -149,12 +151,7 @@ const SymbolSelector = ({ onChange, interval = "1m" }) => {
               }`}
             >
               <div onClick={() => handleTabClick(s)} className="min-w-0">
-                {/* Symbol name */}
-                <div className="font-semibold text-sm">
-                  {s.label.split(" ")[0]}
-                </div>
-                
-                {/* Only show 1m data in tabs */}
+                <div className="font-semibold text-sm">{s.label.split(" ")[0]}</div>
                 {tabData[s.value] && (
                   <div className="flex items-center space-x-2 text-xs mt-1">
                     <span className="text-gray-300">
@@ -162,22 +159,17 @@ const SymbolSelector = ({ onChange, interval = "1m" }) => {
                     </span>
                     <span
                       className={`font-medium ${
-                        (tabData[s.value].change24h ?? 0) >= 0
-                          ? "text-green-400"
-                          : "text-red-400"
+                        (tabData[s.value].change24h ?? 0) >= 0 ? "text-green-400" : "text-red-400"
                       }`}
                     >
                       {(tabData[s.value].change24h ?? 0) >= 0 ? "+" : ""}
                       {tabData[s.value].change24h?.toFixed(2)}%
                     </span>
-                    <span className="text-green-400 font-medium">
-                      {tabData[s.value].return1m}%
-                    </span>
+                    <span className="text-green-400 font-medium">{tabData[s.value].return1m}%</span>
                   </div>
                 )}
               </div>
-              
-              {/* Close button */}
+
               {tabs.length > 1 && (
                 <button
                   onClick={(e) => {
@@ -192,20 +184,9 @@ const SymbolSelector = ({ onChange, interval = "1m" }) => {
             </div>
           ))}
         </div>
-
-        {/* Fixed + button */}
-        <button
-          onClick={() => {
-            setOpen(!open);
-            symbols.forEach((s) => fetchSymbolData(s.value));
-          }}
-          className="flex-shrink-0 ml-2 w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded-lg text-white font-bold text-lg flex items-center justify-center transition-all duration-200 shadow-lg hover:shadow-xl backdrop-blur-md border border-blue-400/30"
-        >
-          +
-        </button>
       </div>
 
-      {/* Enhanced dropdown table positioned to the right */}
+      {/* Dropdown table */}
       {open && (
         <div className="absolute top-12 left-0 w-[600px] bg-gradient-to-br from-gray-900/95 to-gray-800/95 backdrop-blur-xl border border-gray-600/30 rounded-2xl shadow-2xl overflow-hidden">
           {/* Header */}
@@ -216,14 +197,24 @@ const SymbolSelector = ({ onChange, interval = "1m" }) => {
                 onClick={() => setOpen(false)}
                 className="text-gray-400 hover:text-white transition-colors"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
           </div>
 
-          {/* Table container with custom scrollbar */}
+          {/* Table container */}
           <div className="max-h-80 overflow-y-auto">
             <table className="w-full">
               <thead className="bg-gray-800/50 sticky top-0">
@@ -240,46 +231,47 @@ const SymbolSelector = ({ onChange, interval = "1m" }) => {
                   <tr
                     key={s.value}
                     className={`cursor-pointer transition-all duration-150 hover:bg-blue-500/10 ${
-                      active.value === s.value 
-                        ? "bg-blue-500/20 border-l-2 border-blue-400" 
+                      active.value === s.value
+                        ? "bg-blue-500/20 border-l-2 border-blue-400"
                         : "hover:bg-gray-700/30"
                     }`}
                     onClick={() => handleSelect(s)}
                   >
                     <td className="px-4 py-3">
                       <div className="flex items-center space-x-3">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
-                          index % 3 === 0 ? 'bg-orange-500/20 text-orange-400' :
-                          index % 3 === 1 ? 'bg-blue-500/20 text-blue-400' :
-                          'bg-purple-500/20 text-purple-400'
-                        }`}>
+                        <div
+                          className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
+                            index % 3 === 0
+                              ? "bg-orange-500/20 text-orange-400"
+                              : index % 3 === 1
+                              ? "bg-blue-500/20 text-blue-400"
+                              : "bg-purple-500/20 text-purple-400"
+                          }`}
+                        >
                           {s.label.split(" ")[0].charAt(0)}
                         </div>
                         <div>
-                          <div className="text-white font-medium">
-                            {s.label.split(" ")[0]}
-                          </div>
-                          <div className="text-gray-400 text-xs">
-                            {s.label.split(" / ")[1]}
-                          </div>
+                          <div className="text-white font-medium">{s.label.split(" ")[0]}</div>
+                          <div className="text-gray-400 text-xs">{s.label.split(" / ")[1]}</div>
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-3 text-right">
                       <span className="text-white font-mono">
-                        {tabData[s.value]?.price ? 
-                          `$${tabData[s.value].price.toFixed(tabData[s.value].price >= 1 ? 2 : 6)}` : 
-                          <div className="w-16 h-4 bg-gray-700/50 rounded animate-pulse"></div>
-                        }
+                        {tabData[s.value]?.price
+                          ? `$${tabData[s.value].price.toFixed(tabData[s.value].price >= 1 ? 2 : 6)}`
+                          : <div className="w-16 h-4 bg-gray-700/50 rounded animate-pulse"></div>}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-right">
                       {tabData[s.value]?.change24h !== undefined ? (
-                        <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                          (tabData[s.value]?.change24h ?? 0) >= 0
-                            ? "bg-green-500/20 text-green-400"
-                            : "bg-red-500/20 text-red-400"
-                        }`}>
+                        <div
+                          className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                            (tabData[s.value]?.change24h ?? 0) >= 0
+                              ? "bg-green-500/20 text-green-400"
+                              : "bg-red-500/20 text-red-400"
+                          }`}
+                        >
                           {(tabData[s.value].change24h ?? 0) >= 0 ? "↗" : "↘"}
                           {Math.abs(tabData[s.value].change24h).toFixed(2)}%
                         </div>

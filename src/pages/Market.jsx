@@ -3,12 +3,20 @@ import LiveChart from "../components/Market/LiveChart";
 import TradingSideBar from "../components/Market/TradingSideBar";
 import SymbolSelector from "../components/Market/SymbolSelector";
 import IntervalSelector from "../components/Market/IntervalSelector";
-import DashboardSidebar from "../components/Dashboard/DashboardSidebar";
+// import DashboardSidebar from "../components/Dashboard/DashboardSidebar";
 
 const Market = () => {
   const [symbol, setSymbol] = useState("BTCUSDT");
   const [interval, setInterval] = useState("1m");
   const [refreshKey, setRefreshKey] = useState(0);
+  
+  // ✅ NEW: Add hover state management
+  const [tradeHoverState, setTradeHoverState] = useState(null);
+
+  // ✅ NEW: Handle trade button hover
+  const handleTradeHover = (direction) => {
+    setTradeHoverState(direction); // 'UP', 'DOWN', or null
+  };
 
   useEffect(() => {
     const handleFullscreenChange = () => {
@@ -44,7 +52,11 @@ const Market = () => {
         >
           {/* Chart takes full available space */}
           <div className="flex-1 relative min-h-0 min-w-0">
-            <LiveChart symbol={symbol} interval={interval} />
+            <LiveChart 
+              symbol={symbol} 
+              interval={interval}
+              tradeHoverState={tradeHoverState} // ✅ Pass hover state to chart
+            />
           </div>
           
           {/* Overlayed controls */}
@@ -58,7 +70,8 @@ const Market = () => {
         symbol={symbol} 
         onSwitch={() => {
           // Optional: add symbol switch logic here
-        }} 
+        }}
+        onTradeHover={handleTradeHover} // ✅ Pass hover handler to sidebar
       />
     </div>
   );
