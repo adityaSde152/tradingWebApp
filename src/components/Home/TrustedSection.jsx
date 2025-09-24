@@ -4,8 +4,10 @@ import { FaBitcoin, FaPlus } from "react-icons/fa6";
 import { FaEthereum, FaUser } from "react-icons/fa";
 import { RiBnbFill } from "react-icons/ri";
 import TradingCandleCard from "../TrustedSection/TradingCandleCard";
+import { useNavigate } from "react-router-dom";
 
 const TrustedSection = () => {
+  const navigate = useNavigate();
   return (
     <section className="bg-dark text-white w-full px-6 md:px-16 py-12 flex flex-col gap-10">
       {/* Section Heading */}
@@ -90,7 +92,10 @@ const TrustedSection = () => {
         >
           {/* Content */}
           {/* <div className="relative z-10 py-2 px-2 flex flex-col items-center h-[350px] sm:h-full w-full"> */}
-          <button className="bg-green absolute left-[30%] right-[30%] top-[25%] mt-20 sm:mt-10 hover:scale-105 duration-300 text-white rounded-xl py-2 px-6 md:px-8 font-bold text-base md:text-lg shadow">
+          <button
+            onClick={() => navigate(`/dashboard/markets`)}
+            className="bg-gradient-to-br from-green-600 to-green absolute left-[30%] right-[30%] top-[25%] mt-20 sm:mt-12 hover:scale-105 duration-200  text-white rounded-xl py-2 px-6 md:px-8 font-bold text-base md:text-lg shadow-2xl cursor-pointer"
+          >
             Trade
           </button>
           {/* </div> */}
@@ -184,7 +189,6 @@ const TrustedSection = () => {
         </div>
 
         {/* Trading Card */}
-       
 
         {/* Resources Card */}
         <div className="bg-white h-[350px] sm:col-span-2 lg:col-span-1 text-dark/90 w-full rounded-xl shadow-lg flex flex-col justify-center items-center">

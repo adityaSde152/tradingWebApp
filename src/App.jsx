@@ -1,7 +1,6 @@
 import React from "react";
 import Home from "./pages/Home";
 import { Route, Routes } from "react-router-dom";
-import ChatBot from "./components/ChatBot";
 import Dashboard from "./pages/Dashboard";
 import PageNotFound from "./pages/PageNotFound";
 import MainNavigation from "./components/MainNavigation";
@@ -13,10 +12,13 @@ import Trade from "./pages/Trade";
 import Blog from "./pages/Blog";
 import AllArticle from "./components/Blogs/AllArticle";
 import ArticlePage from "./components/Blogs/ArticlePage";
-import Deposit from "./pages/Transaction/Deposit";
-import CryptoDeposit from "./pages/Transaction/CryptoDeposit";
-import Withdrawl from "./pages/Transaction/Withdrawal";
-import Withdrawal from "./pages/Transaction/Withdrawal";
+import AboutUs from "./pages/AboutUs";
+import Resources from "./pages/Resources";
+import DownloadApp from "./pages/DownloadApp";
+import FaqSection from "./components/Home/FaqSection";
+import Guides from "./components/Resources/Guides";
+import Insights from "./components/Resources/Insights";
+import Videos from "./components/Resources/Videos";
 
 const App = () => {
   return (
@@ -30,12 +32,22 @@ const App = () => {
           style: { fontSize: "14px" },
         }}
       />
-      <ChatBot />
       <Routes>
         <Route path="/demo-account" element={<Market />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/" element={<MainNavigation />}>
           <Route index element={<Home />} />
-          <Route path="login" element={<Login />} />
+          {/* <Route path="about-us" element={<AboutUs />} /> */}
+          {/* <Route path="download" element={<DownloadApp />} /> */}
+
+          {/* Resources Routes */}
+          <Route path="resources" element={<Resources />} />
+          <Route path="resources/guides" element={<Guides />} />
+          <Route path="resources/faqs" element={<FaqSection />} />
+          <Route path="resources/insights" element={<Insights />} />
+          <Route path="resources/videos" element={<Videos />} />
+
+
           {/* Blogs Routes */}
           <Route path="blog" element={<Blog />} />
           <Route path="blog/:id" element={<ArticlePage />} />
@@ -49,11 +61,7 @@ const App = () => {
           <Route path="profile" element={<Dashboard />} />
           <Route path="markets" element={<Market />} />
           <Route path="trade" element={<Trade />} />
-          <Route path="deposit" element={<Deposit/>}/>
-          <Route path="withdrawal" element={<Withdrawal/>}/>
-          <Route path="/dashboard/deposit/:crypto" element={<CryptoDeposit/>} /> 
           <Route path="*" element={<PageNotFound />} />
-          
         </Route>
         <Route path="*" element={<PageNotFound />} />
       </Routes>

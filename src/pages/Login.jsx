@@ -18,7 +18,7 @@ import { loginUser, registerUser, verifyOtp } from "../services/authServices";
 
 const Login = () => {
   const { user, setUser, isLoading, setIsLoading } = useContext(AuthContext);
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [otp, setOtp] = useState("");

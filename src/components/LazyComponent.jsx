@@ -1,6 +1,7 @@
 import React, { Suspense } from "react";
 import { useInView } from "react-intersection-observer";
 import CandlestickLoader from "./Common/CandleStickLoader";
+import Loader from "./Loader/Loader";
 
 const LazyComponent = ({ Component }) => {
   const { ref, inView } = useInView({
@@ -11,7 +12,7 @@ const LazyComponent = ({ Component }) => {
   return (
     <div ref={ref}>
       {inView && (
-        <Suspense fallback={<CandlestickLoader />}>
+        <Suspense fallback={<Loader />}>
           <Component />
         </Suspense>
       )}

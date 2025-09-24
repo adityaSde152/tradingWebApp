@@ -2,6 +2,7 @@ import React from "react";
 import { FaWallet, FaArrowDown, FaArrowUp } from "react-icons/fa";
 import { MdSavings } from "react-icons/md";
 import { BiDollar } from "react-icons/bi";
+import { useAuth } from "../../context/AuthContext";
 
 const iconMap = {
   wallet: <FaWallet size={20} />,
@@ -11,11 +12,12 @@ const iconMap = {
 };
 
 const StatsCard = () => {
+  const { user } = useAuth();
   const statsData = [
     {
       id: 1,
       title: "Total Balance",
-      amount: 632000,
+      amount: user?.totalBalance || 0,
       currency: "USD",
       icon: "wallet",
       change: "+1.29%",
@@ -24,7 +26,7 @@ const StatsCard = () => {
     {
       id: 2,
       title: "Total Income",
-      amount: 592000,
+      amount: user?.totalIncome || 0,
       currency: "USD",
       icon: "income",
       change: "-1.29%",
@@ -33,7 +35,7 @@ const StatsCard = () => {
     {
       id: 3,
       title: "Total Savings",
-      amount: 354000,
+      amount: user?.totalSaving || 0,
       currency: "USD",
       icon: "savings",
       change: "+1.29%",
@@ -42,7 +44,7 @@ const StatsCard = () => {
     {
       id: 4,
       title: "Total Expenses",
-      amount: 238000,
+      amount: user?.totalExpenses || 0,
       currency: "USD",
       icon: "expenses",
       change: "-1.29%",
@@ -66,7 +68,7 @@ const StatsCard = () => {
           <p className="text-gray-400 text-sm">{stat.title}</p>
           <div className="flex justify-between items-center">
             <h2 className="text-xs lg:text-sm  font-semibold text-white">
-              ${stat.amount.toLocaleString()}
+              ${stat.amount}
             </h2>
 
             {/* Change */}

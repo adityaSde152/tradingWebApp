@@ -50,9 +50,9 @@ const UserProfile = ({ isEditing, setIsEditing, isLoading, setIsLoading }) => {
             alt="profile"
             className="w-44 h-44 rounded-lg object-cover mb-4"
           />
-          <span className="px-3 py-1 text-xs font-semibold text-white bg-green-600 rounded-full mb-4">
+          {/* <span className="px-3 py-1 text-xs font-semibold text-white bg-green-600 rounded-full mb-4">
             {user?.isActive ? "Active" : "Not Active"}
-          </span>
+          </span> */}
         </div>
 
         {/* User Info */}

@@ -1,12 +1,11 @@
 import React, { Suspense, lazy } from "react";
 import { useInView } from "react-intersection-observer";
-import NavBar from "../components/Home/NavBar";
-import Footer from "../components/Home/Footer";
 import HeroSection from "../components/Home/HeroSection";
 import FeaturesSection from "../components/Home/FeaturesSection";
 import TrustedSection from "../components/Home/TrustedSection";
 import FaqSection from "../components/Home/FaqSection";
 import LazyComponent from "../components/LazyComponent";
+import ChatBot from "../components/ChatBot";
 
 // Lazy load heavy components
 const ScrollSnapSection = lazy(() =>
@@ -18,7 +17,8 @@ const DayNight = lazy(() => import("../components/Home/DayNight"));
 const Home = () => {
   return (
     <div>
-      <HeroSection />
+      <ChatBot />
+      {/* <HeroSection /> */}
       <FeaturesSection />
 
       {/* Lazy load heavy sections */}
