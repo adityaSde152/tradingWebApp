@@ -4,6 +4,7 @@ import QRCode from "react-qr-code";
 import { io } from "socket.io-client";
 import cryptoLogos from "../../assets/cryptoLogos";
 import api from "../../api/axiosClient";
+import WalletNavlink from "../../components/Dashboard/WalletNavlink";
 
 export default function CryptoDeposit({ userId, token }) {
   const { crypto } = useParams();
@@ -82,7 +83,9 @@ export default function CryptoDeposit({ userId, token }) {
   const logoPath = `/crypto-icons/${selectedCrypto.file}`;
 
   return (
+    
     <div className="min-h-screen flex items-center justify-center bg-gray-900 p-6">
+      
       <div
         className="backdrop-blur-lg bg-white/10 rounded-xl w-full max-w-3xl space-y-6 text-white shadow-lg border border-white/20"
         style={{
