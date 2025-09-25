@@ -12,18 +12,16 @@ import Trade from "./pages/Trade";
 import Blog from "./pages/Blog";
 import AllArticle from "./components/Blogs/AllArticle";
 import ArticlePage from "./components/Blogs/ArticlePage";
-// import AboutUs from "./pages/AboutUs";
-// import Resources from "./pages/Resources";
-// import DownloadApp from "./pages/DownloadApp";
-// import FaqSection from "./components/Home/FaqSection";
-// import Guides from "./components/Resources/Guides";
-// import Insights from "./components/Resources/Insights";
-// import Videos from "./components/Resources/Videos";
+import Resources from "./pages/Resources";
+import FaqSection from "./components/Home/FaqSection";
+import Guides from "./components/Resources/Guides";
+import Insights from "./components/Resources/Insights";
+import Videos from "./components/Resources/Videos";
 import Deposit from "./pages/Transaction/Deposit";
 import CryptoDeposit from "./pages/Transaction/CryptoDeposit";
-import Withdrawl from "./pages/Transaction/Withdrawal";
 import Withdrawal from "./pages/Transaction/Withdrawal";
 import CryptoWithdrawal from "./pages/Transaction/CryptoWithdrawal";
+import Ebooks from "./components/Resources/Ebooks";
 
 const App = () => {
   return (
@@ -42,16 +40,14 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<MainNavigation />}>
           <Route index element={<Home />} />
-          {/* <Route path="about-us" element={<AboutUs />} /> */}
-          {/* <Route path="download" element={<DownloadApp />} /> */}
 
           {/* Resources Routes */}
-          {/* <Route path="resources" element={<Resources />} />
+          <Route path="resources" element={<Resources />} />
           <Route path="resources/guides" element={<Guides />} />
           <Route path="resources/faqs" element={<FaqSection />} />
           <Route path="resources/insights" element={<Insights />} />
-          <Route path="resources/videos" element={<Videos />} /> */}
-
+          <Route path="resources/videos" element={<Videos />} />
+          <Route path="resources/ebooks" element={<Ebooks />} />
 
           {/* Blogs Routes */}
           <Route path="blog" element={<Blog />} />
@@ -66,10 +62,16 @@ const App = () => {
           <Route path="profile" element={<Dashboard />} />
           <Route path="markets" element={<Market />} />
           <Route path="trade" element={<Trade />} />
-          <Route path="deposit" element={<Deposit/>}/>
-          <Route path="withdrawal" element={<Withdrawal/>}/>
-          <Route path="/dashboard/deposit/:crypto" element={<CryptoDeposit/>} /> 
-          <Route path="/dashboard/withdrawal/:crypto" element={<CryptoWithdrawal/>} /> 
+          <Route path="deposit" element={<Deposit />} />
+          <Route path="withdrawal" element={<Withdrawal />} />
+          <Route
+            path="/dashboard/deposit/:crypto"
+            element={<CryptoDeposit />}
+          />
+          <Route
+            path="/dashboard/withdrawal/:crypto"
+            element={<CryptoWithdrawal />}
+          />
           <Route path="*" element={<PageNotFound />} />
         </Route>
         <Route path="*" element={<PageNotFound />} />

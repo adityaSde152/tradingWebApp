@@ -33,6 +33,14 @@ import blog7 from "../assets/blog/blog7.png";
 import blog8 from "../assets/blog/blog8.png";
 import blog9 from "../assets/blog/blog9.png";
 import blog10 from "../assets/blog/blog10.png";
+import bonds from "../assets/ebooks/bonds.png";
+import candle from "../assets/ebooks/candle2.png";
+import chart from "../assets/ebooks/chart15.png";
+import dictionary from "../assets/ebooks/dictionary.png";
+import hownot from "../assets/ebooks/hownot.png";
+import indicators from "../assets/ebooks/indicators4.png";
+import options from "../assets/ebooks/optionsfree.png";
+import smartguide from "../assets/ebooks/smartguide.png";
 
 export default {
   hero_img,
@@ -70,4 +78,12 @@ export default {
   blog8,
   blog9,
   blog10,
+  bonds,
+  candle,
+  chart,
+  dictionary,
+  hownot,
+  indicators,
+  options,
+  smartguide,
 };

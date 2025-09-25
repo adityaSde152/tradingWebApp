@@ -18,7 +18,7 @@ const Home = () => {
   return (
     <div>
       <ChatBot />
-      {/* <HeroSection /> */}
+      <HeroSection />
       <FeaturesSection />
 
       {/* Lazy load heavy sections */}
