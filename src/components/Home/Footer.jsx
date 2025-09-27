@@ -139,7 +139,7 @@ const Footer = () => {
               </button>
             </span>
             <span>
-              <input className="border rounded-md " type="checkbox" />{" "}
+              <input className="border rounded-md " type="checkbox" defaultChecked />{" "}
               <span>I agree to the terms and conditions</span>{" "}
             </span>
           </div>

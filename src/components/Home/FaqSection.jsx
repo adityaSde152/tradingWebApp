@@ -73,9 +73,13 @@ const FaqSection = () => {
               }`}
               onClick={() => toggleFAQ(index)}
             >
-              <div className="flex justify-between items-center px-6 py-4 text-white font-medium">
+              <div
+                className={`flex justify-between items-center px-6 py-4 ${
+                  openIndex === index ? "text-green" : "text-white"
+                } font-medium`}
+              >
                 <span>{faq.question}</span>
-                <span className="text-gray-400 text-xl">
+                <span className="text-green text-xl">
                   {openIndex === index ? "−" : "+"}
                 </span>
               </div>

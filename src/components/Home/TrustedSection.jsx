@@ -30,10 +30,11 @@ const TrustedSection = () => {
         </div>
 
         {/* Right Side Card */}
-        <div className="bg-white text-dark h-[350px] py-4 md:py-20 px-2 rounded-xl shadow-lg relative  flex flex-col justify-center items-center w-full lg:w-[32%]">
-          <div className="">
-            {/* GBP */}
-            <div className="z-30 absolute top-10 left-2 w-[95%] flex justify-between items-center bg-white rounded-xl shadow-2xl hover:scale-103 duration-300 p-4">
+        <div className="relative bg-white text-dark py-6 px-4 rounded-xl shadow-lg flex flex-col justify-between items-center w-full lg:w-[32%]">
+          {/* Coins Container */}
+          <div className=" flex flex-col -space-y-3 w-[80%] lg:w-full items-center">
+            {/* BTC */}
+            <div className="z-30 w-full flex justify-between items-center bg-white rounded-xl shadow-2xl hover:scale-103 duration-300 p-4">
               <div className="flex items-center space-x-3">
                 <span className="text-4xl text-yellow-500">
                   <FaBitcoin />
@@ -46,37 +47,37 @@ const TrustedSection = () => {
               <p className="font-bold text-lg">$1,17,168</p>
             </div>
 
-            {/* USD */}
-            <div className="z-20 absolute top-25 left-6 w-[85%] flex justify-between items-center bg-white rounded-xl shadow-2xl hover:scale-103 duration-300 p-4">
+            {/* ETH */}
+            <div className="w-[90%] z-20 flex justify-between items-center bg-white rounded-xl shadow-2xl hover:scale-103 duration-300 p-4">
               <div className="flex items-center space-x-3">
                 <span className="text-4xl text-blue-500">
                   <FaEthereum />
                 </span>
                 <div>
                   <p className="font-semibold">ETH</p>
-                  <p className="text-sm text-gray-500">Etherium</p>
+                  <p className="text-sm text-gray-500">Ethereum</p>
                 </div>
               </div>
               <p className="font-bold text-lg">$4,578</p>
             </div>
 
-            {/* EUR */}
-            <div className="z-10 absolute top-40 left-12 w-[75%] flex justify-between items-center bg-white rounded-xl shadow-2xl hover:scale-103 duration-300 p-4">
+            {/* BNB */}
+            <div className="w-[80%] z-10 flex justify-between items-center bg-white rounded-xl shadow-2xl hover:scale-103 duration-300 p-4">
               <div className="flex items-center space-x-3">
                 <span className="text-4xl text-yellow-400">
                   <RiBnbFill />
                 </span>
                 <div>
                   <p className="font-semibold">BNB</p>
-                  <p className="text-sm text-gray-500">Binance coin</p>
+                  <p className="text-sm text-gray-500">Binance Coin</p>
                 </div>
               </div>
-              <p className="font-bold  text-lg">$995</p>
+              <p className="font-bold text-lg">$995</p>
             </div>
           </div>
 
           {/* Footer Text */}
-          <div className="text-center absolute bottom-6">
+          <div className="text-center mt-8">
             <p className="text-green text-xl font-semibold">Trade Crypto</p>
             <p className="text-dark font-bold">with Zero Limits</p>
           </div>

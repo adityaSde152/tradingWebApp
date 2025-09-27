@@ -30,7 +30,7 @@ const Blog = () => {
           <img
             src={articles[0].image}
             alt="Featured"
-            className="rounded-xl shadow-md"
+            className="rounded-xl shadow-md xl:w-full xl:h-100"
           />
         </div>
         {/* Left Content box */}
@@ -112,11 +112,10 @@ const Blog = () => {
       </div>
 
       {/* View All Article */}
-      <div className="flex justify-center items-center mt-6">
+      <div className="flex justify-center items-center my-12">
         <button
           onClick={() => {
             navigate("all");
-            scrollTo(0, 0);
           }}
           className="px-5 py-2 bg-green rounded-lg cursor-pointer"
         >

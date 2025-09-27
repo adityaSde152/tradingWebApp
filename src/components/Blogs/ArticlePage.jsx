@@ -9,10 +9,6 @@ const ArticlePage = () => {
 
   const article = articles.find((a) => a.id === Number(id));
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
   if (!article) {
     return (
       <div className="flex items-center justify-center h-screen text-4xl text-white/70">

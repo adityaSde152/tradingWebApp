@@ -66,15 +66,15 @@ const Resources = () => {
         {resources.map((res, idx) => (
           <div
             key={idx}
-            className="bg-gray-800 p-6 rounded-2xl shadow-md hover:shadow-green transition hover:-translate-y-2"
+            className="bg-gray-800 px-6 py-8 rounded-2xl shadow-md hover:shadow-green transition lg:min-h-56 hover:-translate-y-2"
           >
             <div className="flex space-x-2">
               <div className="mb-3">{res.icon}</div>
-              <h3 className="text-xl font-semibold text-white mb-3">
+              <h3 className="text-xl lg:text-2xl font-semibold text-white mb-3">
                 {res.title}
               </h3>
             </div>
-            <p className="text-gray-400 mb-4">{res.desc}</p>
+            <p className="text-gray-400 mb-4 lg:text-xl">{res.desc}</p>
             <a
               href={res.link}
               className="text-green font-medium hover:underline"
@@ -106,72 +106,3 @@ const Resources = () => {
 };
 
 export default Resources;
-
-// import React, { useState } from "react";
-// import { FaBook, FaPuzzlePiece, FaQuestionCircle } from "react-icons/fa";
-
-// const resourcesData = {
-//   beginnerGuide: [
-//     "What is trading?",
-//     "How to use the platform",
-//     "Types of trading: Stocks, Forex, Crypto, Options, Futures, etc.",
-//     "Risk management basics",
-//     "Trading Terminologies",
-//   ],
-//   interactiveContent: ["Quizzes"],
-//   platformHelp: ["FAQs", "How to deposit", "How to withdraw money"],
-// };
-
-// const Card = ({ icon, title, items }) => {
-//   const [open, setOpen] = useState(false);
-
-//   return (
-//     <div
-//       className="bg-gray-800 p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer"
-//       onClick={() => setOpen(!open)}
-//     >
-//       <div className="flex items-center mb-4">
-//         <div className="text-green-400 text-3xl mr-4">{icon}</div>
-//         <h3 className="text-xl font-semibold text-white">{title}</h3>
-//       </div>
-//       {open && (
-//         <ul className="list-disc list-inside text-gray-300 space-y-2 mt-2">
-//           {items.map((item, index) => (
-//             <li key={index}>{item}</li>
-//           ))}
-//         </ul>
-//       )}
-//       {!open && <p className="text-gray-500 mt-2">Click to expand</p>}
-//     </div>
-//   );
-// };
-
-// const Resources = () => {
-//   return (
-//     <section className="min-h-screen bg-gray-900 py-16 px-8">
-//       <h1 className="text-4xl font-bold text-green-500 mb-12 text-center">
-//         Resources
-//       </h1>
-
-//       <div className="grid md:grid-cols-3 gap-8">
-//         <Card
-//           icon={<FaBook />}
-//           title="Beginner Guide"
-//           items={resourcesData.beginnerGuide}
-//         />
-//         <Card
-//           icon={<FaPuzzlePiece />}
-//           title="Interactive Content"
-//           items={resourcesData.interactiveContent}
-//         />
-//         <Card
-//           icon={<FaQuestionCircle />}
-//           title="Platform Help"
-//           items={resourcesData.platformHelp}
-//         />
-//       </div>
-//     </section>
-//   );
-// };
-
-// export default Resources;

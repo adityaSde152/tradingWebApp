@@ -22,6 +22,10 @@ import CryptoDeposit from "./pages/Transaction/CryptoDeposit";
 import Withdrawal from "./pages/Transaction/Withdrawal";
 import CryptoWithdrawal from "./pages/Transaction/CryptoWithdrawal";
 import Ebooks from "./components/Resources/Ebooks";
+import Community from "./components/Resources/Community";
+import DiscussionPage from "./components/Resources/DiscussionPage";
+import DownloadApp from "./pages/DownloadApp";
+import ScrollToTop from "./components/Common/ScrollToTop";
 
 const App = () => {
   return (
@@ -35,9 +39,12 @@ const App = () => {
           style: { fontSize: "14px" },
         }}
       />
+      {/* Scroll To Top on every routes change */}
+      <ScrollToTop />
       <Routes>
         <Route path="/demo-account" element={<Market />} />
         <Route path="/login" element={<Login />} />
+
         <Route path="/" element={<MainNavigation />}>
           <Route index element={<Home />} />
 
@@ -48,12 +55,16 @@ const App = () => {
           <Route path="resources/insights" element={<Insights />} />
           <Route path="resources/videos" element={<Videos />} />
           <Route path="resources/ebooks" element={<Ebooks />} />
+          <Route path="resources/community" element={<Community />} />
+          <Route path="resources/community/:id" element={<DiscussionPage />} />
 
           {/* Blogs Routes */}
           <Route path="blog" element={<Blog />} />
           <Route path="blog/:id" element={<ArticlePage />} />
           <Route path="blog/all" element={<AllArticle />} />
           <Route path="*" element={<PageNotFound />} />
+
+          <Route path="download" element={<DownloadApp />} />
         </Route>
 
         {/* Dashboard Routes */}

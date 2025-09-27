@@ -140,12 +140,12 @@ export default function Scroll() {
       className="w-full pt-10 h-screen bg-dark text-white flex flex-col sm:flex-row items-center sm:items-start overflow-hidden"
     >
       {/* Left Side: Image */}
-      <div className="flex w-full md:w-1/2 bg-dark items-center justify-center top-0 pt-20 sm:pt-0 sticky h-screen pointer-events-none z-20">
+      <div className="flex w-full md:w-1/2 bg-transparent items-center justify-center top-0 pt-20 sm:pt-0 sticky h-screen pointer-events-none z-20">
         <img
           ref={imageRef}
           src={tradingCards[activeIndex].image}
           alt={tradingCards[activeIndex].title}
-          className="w-[300px] sm:w-[400px] h-[300px] sm:h-[400px] object-contain rounded-2xl shadow-2xl will-change-transform will-change-opacity"
+          className="w-[300px] sm:w-[400px] h-[300px] backdrop-blur sm:h-[400px] object-contain rounded-2xl shadow-2xl will-change-transform will-change-opacity"
           loading="lazy"
         />
       </div>

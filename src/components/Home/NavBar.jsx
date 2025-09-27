@@ -36,7 +36,7 @@ export default function Navbar() {
         to={"/resources"}
         className={({ isActive }) => `${isActive && "text-green"}`}
       >
-        RESOURCES
+        Resources
       </NavLink>
       <NavLink
         onClick={() => setIsOpen(false)}
@@ -65,9 +65,9 @@ export default function Navbar() {
   return (
     <div className="fixed top-0 left-0 w-full z-99 overflow-x-hidden">
       <nav
-        className={`bg-dark shadow-sm transition-all duration-300 mx-auto ${
+        className={`bg-dark shadow-sm transition-all duration-500 ease-in-out mx-auto ${
           scrolled
-            ? "bg-dark border border-gray-400 rounded-xl shadow-md mt-2 max-w-[90%] sm:max-w-[85%] md:max-w-[80%] duration-300"
+            ? "bg-gray-800 rounded-xl shadow-md mt-2 max-w-[90%] sm:max-w-[85%] md:max-w-[80%] duration-300"
             : "w-full"
         } text-white`}
       >
@@ -157,7 +157,7 @@ export default function Navbar() {
               <Link
                 to={"/demo-account"}
                 onClick={() => setIsOpen(false)}
-                className="mx-28 w-full px-4 py-1 text-center border border-green rounded-full text-sm mt-2  hover:bg-green duration-300"
+                className=" w-full px-4 py-1 flex items-center justify-center rounded-full text-sm mt-2  hover:bg-green duration-300"
               >
                 Demo Account
               </Link>
